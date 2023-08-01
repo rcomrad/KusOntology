@@ -1,0 +1,38 @@
+c1
+	is int
+	located main
+function
+	child main
+for
+	child for_0
+c2
+	is int
+	located main
+main
+	contain c1
+	is function
+	return int
+	contain a
+	contain b
+	contain c2
+	contain for_0
+int
+	child c2
+	associated main
+	child i
+	child a
+	child b
+	child c1
+a
+	is int
+	located main
+b
+	is int
+	located main
+for_0
+	located main
+	is for
+	contain i
+i
+	is int
+	located for_0
