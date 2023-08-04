@@ -1,38 +1,122 @@
 c1
-	is int
-	located main
+	is
+		int
+	located
+		main
 function
-	child main
+	child
+		main
+cond_block_1_0
+	located
+		if_1
+	use
+		a
+	contain
+		expr_block_1
 for
-	child for_0
+	child
+		cicle_0
 c2
-	is int
-	located main
+	is
+		int
+	located
+		main
 main
-	contain c1
-	is function
-	return int
-	contain a
-	contain b
-	contain c2
-	contain for_0
+	is
+		function
+	return
+		int
+	contain
+		a
+		b
+		c1
+		c2
+		cicle_0
 int
-	child c2
-	associated main
-	child i
-	child a
-	child b
-	child c1
+	associated
+		main
+	child
+		a
+		b
+		c1
+		c2
+		i
 a
-	is int
-	located main
+	is
+		int
+	participate
+		cond_block_0_0
+		cond_block_1_0
+		expr_block_1
+	located
+		main
 b
-	is int
-	located main
-for_0
-	located main
-	is for
-	contain i
+	is
+		int
+	participate
+		expr_block_2
+	located
+		main
+if_1
+	is
+		condition
+	contain
+		cond_block_1_0
+		cond_block_1_1
+	located
+		cicle_0
+condition
+	child
+		if_0
+		if_1
+cicle_0
+	is
+		for
+	contain
+		expr_block_0
+		i
+		if_0
+		if_1
+	located
+		main
 i
-	is int
-	located for_0
+	is
+		int
+	located
+		cicle_0
+	participate
+		cond_block_0_0
+		expr_block_0
+if_0
+	is
+		condition
+	contain
+		cond_block_0_0
+	located
+		cicle_0
+cond_block_0_0
+	located
+		if_0
+	use
+		a
+		i
+expr_block_0
+	use
+		i
+	located
+		cicle_0
+expr_block_1
+	use
+		a
+	located
+		cond_block_1_0
+cond_block_1_1
+	located
+		if_1
+	contain
+		expr_block_2
+expr_block_2
+	use
+		b
+	located
+		cond_block_1_1

@@ -2,6 +2,7 @@
 #define WEB_HPP
 
 #include <set>
+#include <unordered_set>
 
 #include "domain/holy_trinity.hpp"
 #include "domain/metaprogramming.hpp"
@@ -25,16 +26,21 @@ private:
     std::unordered_map<std::string, Node> mWeb;
 
     // std::vector<std::string> process(const std::string& aStr) noexcept;
-    std::vector<std::string> process(const char*& aStr) noexcept;
+    std::unordered_set<std::string> process(const char*& aStr) noexcept;
 
-    std::vector<std::string> typeHandler(const std::string& aCommand,
-                                         const std::string& aArgs) noexcept;
-    std::vector<std::string> declarationHandler(
+    std::unordered_set<std::string> typeHandler(
         const std::string& aCommand, const std::string& aArgs) noexcept;
-    std::vector<std::string> funcHandler(const std::string& aCommand,
-                                         const std::string& aArgs) noexcept;
-    std::vector<std::string> cicleHandler(const std::string& aCommand,
-                                          const std::string& aArgs) noexcept;
+    std::unordered_set<std::string> declarationHandler(
+        const std::string& aCommand, const std::string& aArgs) noexcept;
+    std::unordered_set<std::string> funcHandler(
+        const std::string& aCommand, const std::string& aArgs) noexcept;
+    std::unordered_set<std::string> cicleHandler(
+        const std::string& aCommand, const std::string& aArgs) noexcept;
+    std::unordered_set<std::string> conditionHandler(
+        const std::string& aCommand, const std::string& aArgs) noexcept;
+    std::unordered_set<std::string> expressionHandler(
+        const std::string& aCommand, const std::string& aArgs) noexcept;
+
     void createNode(const std::string& aName,
                     Node::Type aType,
                     const std::pair<std::string, std::string>& aLeave) noexcept;
@@ -47,6 +53,10 @@ private:
     static void skipDefault(const char*& c) noexcept;
     static void skipAssaigment(const char*& c) noexcept;
     static void skipCicle(const char*& c) noexcept;
+
+    static bool check(const char*& aStr) noexcept;
+
+    static std::string getInsides(const std::string& aStr) noexcept;
 };
 } // namespace core
 

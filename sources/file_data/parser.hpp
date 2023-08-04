@@ -29,12 +29,14 @@ public:
     static std::vector<std::string> slice(
         const std::string& aStr,
         const std::string& aDelimiters,
-        const std::string& aErase = "") noexcept;
+        const std::string& aErase = "",
+        bool aErraseEmptySlots    = true) noexcept;
 
     static std::vector<std::string> slice(
         const std::string& aStr,
         const std::string& aDelimiters,
-        const std::function<void(const char*& c)>& aSkiper) noexcept;
+        const std::function<void(const char*& c)>& aSkiper,
+        bool aErraseEmptySlots = true) noexcept;
 
     enum class Type
     {

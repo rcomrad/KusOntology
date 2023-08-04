@@ -79,7 +79,8 @@ file::Parser::slice(const std::string& aStr, char aDelimiters) noexcept
 std::vector<std::string>
 file::Parser::slice(const std::string& aStr,
                     const std::string& aDelimiters,
-                    const std::string& aErase) noexcept
+                    const std::string& aErase,
+                    bool aErraseEmptySlots) noexcept
 {
     std::vector<std::string> result(1);
 
@@ -92,11 +93,14 @@ file::Parser::slice(const std::string& aStr,
                 result.back().push_back(i);
             }
         }
-        else if (!result.back().empty())
+        else if (!(result.back().empty() && aErraseEmptySlots))
         {
             result.emplace_back();
         }
     }
+
+    while (!result.empty() && result.back().empty() && aErraseEmptySlots)
+        result.pop_back();
 
     return result;
 }
@@ -104,7 +108,8 @@ file::Parser::slice(const std::string& aStr,
 std::vector<std::string>
 file::Parser::slice(const std::string& aStr,
                     const std::string& aDelimiters,
-                    const std::function<void(const char*& c)>& aSkiper) noexcept
+                    const std::function<void(const char*& c)>& aSkiper,
+                    bool aErraseEmptySlots) noexcept
 {
     std::vector<std::string> result(1);
 
@@ -122,14 +127,15 @@ file::Parser::slice(const std::string& aStr,
                 result.back().push_back(*c);
             }
         }
-        else if (!result.back().empty())
+        else if (!(result.back().empty() && aErraseEmptySlots))
         {
             result.emplace_back();
         }
         ++c;
     }
 
-    while (result.back().empty()) result.pop_back();
+    while (!result.empty() && result.back().empty() && aErraseEmptySlots)
+        result.pop_back();
 
     return result;
 }
