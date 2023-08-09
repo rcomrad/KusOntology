@@ -3,6 +3,7 @@
 
 #include <boost/optional.hpp>
 
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -19,6 +20,11 @@ public:
 
     boost::optional<const std::string&> getPath(
         const std::string& aName) noexcept;
+    std::optional<std::string> getPath(const std::string& aFolder,
+                                       const std::string& aName) noexcept;
+    std::string getPathUnsafe(const std::string& aFolder,
+                              const std::string& aName) noexcept;
+
     static std::string generateConfigFolderPath() noexcept;
 
     void setPath(const std::string& aName, const std::string& aPath) noexcept;
@@ -27,6 +33,9 @@ public:
     static std::vector<std::string> getAllContentPaths(
         const std::string& aPath) noexcept;
     static std::unordered_map<std::string, std::string> getAllContentPathsMap(
+        const std::string& aPath) noexcept;
+
+    static std::unordered_map<std::string, std::string> getAllFoldersPathMap(
         const std::string& aPath) noexcept;
 
 private:

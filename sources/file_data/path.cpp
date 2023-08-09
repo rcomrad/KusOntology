@@ -1,7 +1,8 @@
 #include "path.hpp"
 
 #include <filesystem>
-#include <iostream>
+
+#include "domain/log.hpp"
 
 #include "file.hpp"
 #include "parser.hpp"
@@ -36,8 +37,9 @@ file::Path::reset() noexcept
     setPath("exe", getExecutablePath());
     setPath("main", calculateMainPath(mPaths["exe"]));
     // TODO: add all folders from project?
-    setPath("config", mPaths["main"] + "config/");
-    setDefault(mPaths["main"]);
+    // setPath("config", mPaths["main"] + "config/");
+    auto temp = getAllFoldersPathMap(getPath("main").value());
+    mPaths.insert(temp.begin(), temp.end());
 
     auto& var     = file::VariableStorage::getInstance();
     auto def_path = var.getWord("default_path");
@@ -52,8 +54,7 @@ file::Path::reset() noexcept
     {
         if (var.value.getType() != file::Value::Type::String)
         {
-            std::cout << "ERROR: '" << var.name << "' from " << pathFile
-                      << " isn't path!" << std::endl;
+            dom::writeError("'", var.name, "' from ", pathFile, " isn't path");
             continue;
         }
 
@@ -62,7 +63,7 @@ file::Path::reset() noexcept
 
     if (mPaths.empty())
     {
-        std::cout << "ERROR: no paths file detected!\n";
+        dom::writeError("No paths file detected");
     }
 }
 
@@ -83,6 +84,44 @@ file::Path::getPath(const std::string& aName) noexcept
         }
     }
     if (it != mPaths.end()) result = it->second;
+
+    return result;
+}
+
+std::optional<std::string>
+file::Path::getPath(const std::string& aFolder,
+                    const std::string& aName) noexcept
+{
+    std::optional<std::string> result;
+
+    auto folder = getPath(aFolder);
+    if (folder.has_value())
+    {
+        result = folder.value() + aName;
+    }
+    else
+    {
+        dom::writeWarning("No such folder (", aFolder, ")");
+    }
+
+    return result;
+}
+
+std::string
+file::Path::getPathUnsafe(const std::string& aFolder,
+                          const std::string& aName) noexcept
+{
+    std::string result;
+
+    auto folder = getPath(aFolder);
+    if (folder.has_value())
+    {
+        result = folder.value() + aName;
+    }
+    else
+    {
+        dom::writeError("No such folder (", aFolder, ")");
+    }
 
     return result;
 }
@@ -130,6 +169,32 @@ file::Path::getAllContentPathsMap(const std::string& aPath) noexcept
     return result;
 }
 
+// TODO: merge with upper
+std::unordered_map<std::string, std::string>
+file::Path::getAllFoldersPathMap(const std::string& aPath) noexcept
+{
+    std::unordered_map<std::string, std::string> result;
+    for (const auto& i : std::filesystem::recursive_directory_iterator(aPath))
+    {
+        if (i.is_directory())
+        {
+            auto path = i.path().string();
+            if (path.find("\\.") != std::string::npos ||
+                path.find("git") != std::string::npos ||
+                path.find("build") != std::string::npos)
+                continue;
+
+            int num = path.size();
+            while (num >= 0 && path[num] != '/') num--;
+            auto name = path.substr(num + 1, path.size());
+
+            // if (name[0] == '.' || name == "git" || name == "build") continue;
+            result[name] = path + "\\";
+        }
+    }
+    return result;
+}
+
 //--------------------------------------------------------------------------------
 
 std::string
@@ -159,7 +224,7 @@ file::Path::getExecutablePath() noexcept
 #elif defined(LINUS_LINUX)
     char buf[PATH_MAX + 1];
     if (readlink("/proc/self/exe", buf, sizeof(buf) - 1) == -1)
-        WRITE_ERROR("readlink() failed");
+        dom::writeError("readlink() failed");
     std::string str(buf);
     int i = str.size() - 1;
     for (int j = 0; j < 1; --i)

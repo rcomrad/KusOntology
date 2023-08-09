@@ -27,6 +27,11 @@ public:
         bool aIsCritical               = false,
         std::function<bool(char)> funk = &file::File::isSeparator) noexcept;
 
+    static std::unordered_map<std::string, std::string> getWordsMap(
+        const std::string& aFileName,
+        bool aIsCritical               = false,
+        std::function<bool(char)> funk = &file::File::isSeparator) noexcept;
+
     static std::string writeData(const std::string& aFolderName,
                                  const std::string& aFileName,
                                  const std::string& aData) noexcept;

@@ -24,7 +24,7 @@ public:
         const std::string aFilename, bool aIsCritical = false) noexcept;
 
     static std::vector<std::string> slice(const std::string& aStr,
-                                          char delimiter) noexcept;
+                                          char aDelimiter) noexcept;
 
     static std::vector<std::string> slice(
         const std::string& aStr,

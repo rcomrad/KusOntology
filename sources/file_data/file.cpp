@@ -1,7 +1,8 @@
 #include "file.hpp"
 
 #include <fstream>
-#include <iostream>
+
+#include "domain/log.hpp"
 
 #include "path.hpp"
 
@@ -11,12 +12,12 @@ file::File::getAllData(const std::string& aFileName, bool aIsCritical) noexcept
     std::ifstream ios(aFileName);
     if (!ios.is_open())
     {
-        std::cout << "NO_SUCH_FILE: " + aFileName + "\n";
+        dom::writeError("No such file (", aFileName, ")");
         if (aIsCritical) exit(0);
     }
     else
     {
-        std::cout << "Extracting_file: " + aFileName + "\n";
+        dom::writeInfo("Extracting file (", aFileName, ")");
     }
 
     std::string result;
@@ -75,6 +76,23 @@ file::File::getWords(const std::string& aFileName,
     return result;
 }
 
+// TODO: merge with getWords
+std::unordered_map<std::string, std::string>
+file::File::getWordsMap(const std::string& aFileName,
+                        bool aIsCritical,
+                        std::function<bool(char)> funk) noexcept
+{
+    std::unordered_map<std::string, std::string> result;
+    auto words = getWords(aFileName, aIsCritical, funk);
+
+    for (auto& i : words)
+    {
+        result[i[0]] = i[1];
+    }
+
+    return result;
+}
+
 std::string
 file::File::writeData(const std::string& aFolderName,
                       const std::string& aFileName,
@@ -85,7 +103,7 @@ file::File::writeData(const std::string& aFolderName,
     auto path = Path::getInstance().getPath(aFolderName);
     if (!path)
     {
-        std::cout << "ERROR: no_such_folder " << aFolderName << "\n";
+        dom::writeError("No such folder (", aFolderName, ")");
         path = Path::getInstance().getPath("upload");
     }
 
@@ -103,7 +121,7 @@ file::File::writeData(const std::string& aFolderName,
     }
     else
     {
-        std::cout << "ERROR: no_upload_folder\n";
+        dom::writeError("No upload folder");
     }
 
     return resultFileName;

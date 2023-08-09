@@ -1,6 +1,6 @@
 #include "parser.hpp"
 
-#include <iostream>
+#include "domain/log.hpp"
 
 #include "file.hpp"
 
@@ -47,8 +47,8 @@ file::Parser::getVariablesFromFile(const std::string aFilename,
         }
         else
         {
-            std::cout << "ERROR: '" << str << "' from " << aFilename
-                      << " isn't variable!" << std::endl;
+            dom::writeError("Line '", str, "' from ", aFilename,
+                            " doesn't contain variable");
             continue;
         }
     }
@@ -56,8 +56,9 @@ file::Parser::getVariablesFromFile(const std::string aFilename,
     return result;
 }
 
+// TODO merge slice
 std::vector<std::string>
-file::Parser::slice(const std::string& aStr, char aDelimiters) noexcept
+file::Parser::slice(const std::string& aStr, char aDelimiter) noexcept
 {
     std::vector<std::string> result(1);
 

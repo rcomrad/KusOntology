@@ -15,15 +15,16 @@ public:
     enum class Type
     {
         Nun,
-        Variable,
-        Type,
         Concept,
         Function,
-        Cicle,
+        Type,
+        Variable,
         Condition,
         ConditionBlock,
+        Cicle,
         Expression,
-        FunctionCall
+        FunctionCall,
+        Last
     };
 
     Type mType;

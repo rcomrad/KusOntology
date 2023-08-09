@@ -1,6 +1,7 @@
 #include "web.hpp"
 
 #include <algorithm>
+#include <iostream>
 
 #include "file_data/file.hpp"
 #include "file_data/parser.hpp"
@@ -30,22 +31,114 @@ void
 core::Web::print() const noexcept
 {
     std::string data;
-    for (auto& i : mWeb)
+
+    // for (auto& v : {"function", "condition", "for", "while"})
+    // {
+    //     auto it = mWeb.find(v);
+    //     if (it == mWeb.end()) continue;
+    //     auto i = *it;
+
+    //     data += i.first + "\n";
+    //     for (auto& j : i.second.mLeaves)
+    //     {
+    //         data += "\t" + j.first + "\n";
+    //         for (auto& k : j.second)
+    //         {
+    //             data += "\t\t" + k + "\n";
+    //         }
+    //     }
+
+    //     mWeb.erase(it);
+    // }
+
+    // for (auto& v : {"int", "float", "for", "while", "if", "else if", "else",
+    //                 "expression"})
+    // {
+    //     auto it = mWeb.find(v);
+    //     if (it == mWeb.end()) continue;
+    //     auto i = *it;
+
+    //     data += i.first + "\n";
+    //     for (auto& j : i.second.mLeaves)
+    //     {
+    //         data += "\t" + j.first + "\n";
+    //         for (auto& k : j.second)
+    //         {
+    //             data += "\t\t" + k + "\n";
+    //         }
+    //     }
+
+    //     mWeb.erase(it);
+    // }
+
+    // for (auto& v : mVariables)
+    // {
+    //     auto it = mWeb.find(v);
+    //     auto i  = *it;
+
+    //     data += i.first + "\n";
+    //     for (auto& j : i.second.mLeaves)
+    //     {
+    //         data += "\t" + j.first + "\n";
+    //         for (auto& k : j.second)
+    //         {
+    //             data += "\t\t" + k + "\n";
+    //         }
+    //     }
+
+    //     mWeb.erase(it);
+    // }
+
+    // for (auto& v : mVariables)
+    // {
+    //     auto it = mWeb.find(v);
+    //     auto i  = *it;
+
+    //     data += i.first + "\n";
+    //     for (auto& j : i.second.mLeaves)
+    //     {
+    //         data += "\t" + j.first + "\n";
+    //         for (auto& k : j.second)
+    //         {
+    //             data += "\t\t" + k + "\n";
+    //         }
+    //     }
+
+    //     mWeb.erase(it);
+    // }
+
+    // for (auto& i : mWeb)
+    // {
+    //     data += i.first + "\n";
+    //     for (auto& j : i.second.mLeaves)
+    //     {
+    //         data += "\t" + j.first + "\n";
+    //         for (auto& k : j.second)
+    //         {
+    //             data += "\t\t" + k + "\n";
+    //         }
+    //     }
+    // }
+    // data += "\t" + j.second + " " + j.first + "\n";
+    for (int type = int(Node::Type::Nun); type < int(Node::Type::Last); ++type)
     {
-        data += i.first + "\n";
-        for (auto& j : i.second.mLeaves)
+        for (auto& i : mWeb)
         {
-            data += "\t" + j.first + "\n";
-            for (auto& k : j.second)
+            if (i.second.mType != Node::Type(type)) continue;
+
+            data += i.first + "\n";
+            for (auto& j : i.second.mLeaves)
             {
-                data += "\t\t" + k + "\n";
+                data += "\t" + j.first + "\n";
+                for (auto& k : j.second)
+                {
+                    data += "\t\t" + k + "\n";
+                }
             }
         }
     }
-    // data += "\t" + j.second + " " + j.first + "\n";
 
     file::File::writeData("resources", "out", data);
-    ;
 }
 
 // std::vector<std::string>
@@ -110,10 +203,18 @@ core::Web::declarationHandler(const std::string& aCommand,
     type.mType = Node::Type::Type;
     for (auto& cur : parts)
     {
-        auto name = file::Parser::slice(cur, " =");
-        type.mLeaves["child"].insert(name[0]);
-        createNode(name[0], Node::Type::Variable, {"is"s, aCommand});
-        result.insert(std::move(name[0]));
+        auto temp = file::Parser::slice(cur, " =");
+        auto name = temp[0];
+        if (cur.find('=') != std::string::npos)
+        {
+            auto temp = expressionHandler("", cur);
+            result.insert(temp.begin(), temp.end());
+        }
+
+        mVariables.insert(name);
+        type.mLeaves["child"].insert(name);
+        createNode(name, Node::Type::Variable, {"is"s, aCommand});
+        result.insert(std::move(name));
     }
 
     return result;
@@ -149,20 +250,31 @@ core::Web::cicleHandler(const std::string& aCommand,
     createNode(aCommand, Node::Type::Concept, {"child"s, curName});
     createNode(curName, Node::Type::Cicle, {"is"s, aCommand});
 
-    auto& cur   = mWeb[curName];
-    auto blocks = file::Parser::slice(getInsides(aArgs), ";", "", false);
-    if (!blocks[1].empty()) blocks[1] = "if " + blocks[1];
+    // auto& cur = mWeb[curName];
+    auto blocks = process(getInsides(aArgs));
 
     for (auto& i : blocks)
     {
-        auto ptr  = i.c_str();
-        auto temp = process(ptr);
-        for (auto& j : temp)
-        {
-            cur.mLeaves["contain"].insert(j);
-            mWeb[j].mLeaves["located"].insert(curName);
-        }
+        // auto ptr  = i.c_str();
+        // auto temp = process(ptr);
+        // for (auto& j : temp)
+        // {
+        createEdge(curName, i, "contain");
+        // }
     }
+
+    // if (!blocks[1].empty()) blocks[1] = "if " + blocks[1];
+
+    // for (auto& i : blocks)
+    // {
+    //     auto ptr  = i.c_str();
+    //     auto temp = process(ptr);
+    //     for (auto& j : temp)
+    //     {
+    //         cur.mLeaves["contain"].insert(j);
+    //         mWeb[j].mLeaves["located"].insert(curName);
+    //     }
+    // }
     // auto tempPtr = blocks[0].c_str();
     // auto var     = process(tempPtr);
     // for (auto& i : var)
@@ -205,8 +317,7 @@ core::Web::conditionHandler(const std::string& aCommand,
     auto var = expressionHandler("", getInsides(aArgs));
     for (auto& i : var)
     {
-        createNode(blockName, Node::Type::ConditionBlock, {"use"s, i});
-        createNode(i, Node::Type::Condition, {"participate"s, blockName});
+        createEdge(blockName, i, "use");
     }
 
     return {blockName};
@@ -216,34 +327,133 @@ std::unordered_set<std::string>
 core::Web::expressionHandler(const std::string& aCommand,
                              const std::string& aArgs) noexcept
 {
-    std::unordered_set<std::string> result;
-    auto blocks = file::Parser::slice(aArgs, " \n\t+-");
+    static std::unordered_map<std::string, std::string> methods =
+        file::File::getWordsMap(file::Path::getInstance().getPathUnsafe(
+            "resources", "methods.txt"));
 
-    for (auto&& i : blocks)
+    std::unordered_set<std::string> result;
+
+    int cnt = 0;
+
+    static int expressionNumber = 0;
+    std::string blockName = "expr_block_" + std::to_string(expressionNumber++);
+    std::cout << blockName << " <-> " << aCommand << " " << aArgs << "\n";
+
+    // TODO: ++ -- as asigment
+    auto parts = file::Parser::slice(aArgs, " \t\n-+*/=<>");
+    if (aArgs.find('=') != std::string::npos && !parts.empty())
     {
-        if (mWeb.count(i))
-        {
-            result.insert(std::move(i));
-        }
+        createEdge(blockName, parts[0], "sets");
+        parts[0].clear();
+        ++cnt;
     }
 
-    if (aCommand == "expression" && !result.empty())
+    if (!parts.empty())
     {
-        static int expressionNumber = 0;
-        std::string blockName =
-            "expr_block_" + std::to_string(expressionNumber++);
-
-        auto temp = std::move(result);
-        for (auto& i : temp)
+        for (auto& i : parts)
         {
-            createNode(blockName, Node::Type::Expression, {"use"s, i});
-            createNode(i, Node::Type::Variable, {"participate"s, blockName});
+            bool flag = false;
+            for (auto& j : mVariables)
+            {
+                if (i == j)
+                {
+                    createEdge(blockName, j, "use");
+                    ++cnt;
+                    flag = true;
+                    break;
+                }
+            }
+
+            if (!flag)
+            {
+                for (auto& j : methods)
+                {
+                    if (i == j.first)
+                    {
+                        createEdge(blockName, j.second, "use");
+                        ++cnt;
+                        break;
+                    }
+                }
+            }
         }
+
         result = {blockName};
     }
 
+    if (cnt == 0)
+    {
+        result.clear();
+        --expressionNumber;
+    }
+    else
+    {
+        mWeb[blockName].mType = Node::Type::Expression;
+    }
+
+    // if (assignment.size() > 1)
+    // {
+    // }
+    // else
+    // {
+
+    //     for (auto&& i : blocks)
+    //     {
+    //         if (mWeb.count(i))
+    //         {
+    //             result.insert(std::move(i));
+    //         }
+    //     }
+
+    //     if (aCommand == "expression" && !result.empty())
+    //     {
+    //         static int expressionNumber = 0;
+    //         std::string blockName =
+    //             "expr_block_" + std::to_string(expressionNumber++);
+
+    //         auto temp = std::move(result);
+    //         for (auto& i : temp)
+    //         {
+    //             createNode(blockName, Node::Type::Expression, {"use"s, i});
+    //             createNode(i, Node::Type::Variable,
+    //                        {"participate"s, blockName});
+    //         }
+    //         result = {blockName};
+    //     }
+    // }
+
     return result;
 }
+
+// std::unordered_set<std::string>
+// core::Web::assignmentHandler(const std::string& aCommand,
+//                              const std::string& aArgs) noexcept
+// {
+//     std::unordered_set<std::string> result;
+
+//     static int expressionNumber = 0;
+//     std::string blockName = "expr_block_" +
+//     std::to_string(expressionNumber++);
+
+//     createEdge(blockName, aCommand, "sets");
+
+//     auto parts = file::Parser::slice(aArgs, " \t\n-+*/");
+
+//     for (auto& i : parts)
+//     {
+//         for (auto& j : mVariables)
+//         {
+//             if (i == j)
+//             {
+//                 createEdge(blockName, j, "use");
+//                 break;
+//             }
+//         }
+//     }
+
+//     result = {blockName};
+//     return result;
+// }
 
 std::string
 core::Web::getInsides(const std::string& aStr) noexcept
@@ -278,6 +488,44 @@ core::Web::createTree(
         cur.mLeaves[i.first].insert(i.second);
     }
     // cur.mLeaves.insert(aLeave.begin(), aLeave.end());
+}
+
+std::unordered_map<std::string, std::string>
+foo()
+{
+    std::unordered_map<std::string, std::string> result = {
+        {"use",     "participate"},
+        {"sets",    "assigned"   },
+        {"is",      "child"      },
+        {"contain", "located"    },
+        {"return",  "associated" }
+    };
+
+    std::unordered_map<std::string, std::string> temp;
+    for (auto& i : result)
+    {
+        temp.insert({i.second, i.first});
+    }
+    result.insert(temp.begin(), temp.end());
+
+    return result;
+}
+
+void
+core::Web::createEdge(const std::string& aFrom,
+                      const std::string& aTo,
+                      const std::string& aFromRelation,
+                      Node::Type aFromType) noexcept
+{
+    static std::unordered_map<std::string, std::string> relationSwitch = foo();
+
+    mWeb[aFrom].mLeaves[aFromRelation].insert(aTo);
+    mWeb[aTo].mLeaves[relationSwitch[aFromRelation]].insert(aFrom);
+
+    if (aFromType != Node::Type::Nun)
+    {
+        mWeb[aFrom].mType = aFromType;
+    }
 }
 
 void
@@ -315,6 +563,13 @@ core::Web::skipCicle(const char*& c) noexcept
             ++c;
         }
     }
+}
+
+std::unordered_set<std::string>
+core::Web::process(const std::string& aStr) noexcept
+{
+    auto ptr = aStr.c_str();
+    return process(ptr);
 }
 
 std::unordered_set<std::string>
@@ -380,10 +635,7 @@ core::Web::process(const char*& aStr) noexcept
 
                 for (auto& name : temp)
                 {
-                    createNode(curStr, Node::Type::Variable,
-                               {"contain"s, name});
-                    createNode(name, Node::Type::Variable,
-                               {"located"s, curStr});
+                    createEdge(curStr, name, "contain");
                 }
             }
 
