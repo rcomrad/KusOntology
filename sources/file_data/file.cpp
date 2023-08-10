@@ -93,6 +93,15 @@ file::File::getWordsMap(const std::string& aFileName,
     return result;
 }
 
+std::unordered_set<std::string>
+file::File::getWordsSet(const std::string& aFileName,
+                        bool aIsCritical,
+                        std::function<bool(char)> funk) noexcept
+{
+    auto words = getWords(aFileName, aIsCritical, funk);
+    return std::unordered_set<std::string>(words.begin(), words.end());
+}
+
 std::string
 file::File::writeData(const std::string& aFolderName,
                       const std::string& aFileName,

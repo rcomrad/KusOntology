@@ -5,6 +5,8 @@
 
 #include <array>
 #include <functional>
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -28,6 +30,11 @@ public:
         std::function<bool(char)> funk = &file::File::isSeparator) noexcept;
 
     static std::unordered_map<std::string, std::string> getWordsMap(
+        const std::string& aFileName,
+        bool aIsCritical               = false,
+        std::function<bool(char)> funk = &file::File::isSeparator) noexcept;
+
+    static std::unordered_set<std::string> getWordsSet(
         const std::string& aFileName,
         bool aIsCritical               = false,
         std::function<bool(char)> funk = &file::File::isSeparator) noexcept;

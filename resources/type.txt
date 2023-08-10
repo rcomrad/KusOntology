@@ -1,0 +1,6 @@
+int
+long
+float
+double
+char
+bool

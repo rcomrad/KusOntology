@@ -34,12 +34,14 @@ file::Path::getInstance() noexcept
 void
 file::Path::reset() noexcept
 {
+    auto& storage = getInstance().mPaths;
+
     setPath("exe", getExecutablePath());
-    setPath("main", calculateMainPath(mPaths["exe"]));
+    setPath("main", calculateMainPath(storage["exe"]));
     // TODO: add all folders from project?
     // setPath("config", mPaths["main"] + "config/");
     auto temp = getAllFoldersPathMap(getPath("main").value());
-    mPaths.insert(temp.begin(), temp.end());
+    storage.insert(temp.begin(), temp.end());
 
     auto& var     = file::VariableStorage::getInstance();
     auto def_path = var.getWord("default_path");
@@ -58,10 +60,10 @@ file::Path::reset() noexcept
             continue;
         }
 
-        mPaths[var.name] = var.value;
+        storage[var.name] = var.value;
     }
 
-    if (mPaths.empty())
+    if (storage.empty())
     {
         dom::writeError("No paths file detected");
     }
@@ -74,16 +76,18 @@ file::Path::getPath(const std::string& aName) noexcept
 {
     boost::optional<const std::string&> result;
 
-    auto it = mPaths.find(aName);
-    if (it == mPaths.end())
-    {
-        it = mPaths.find("default");
-        if (it != mPaths.end())
-        {
-            it = mPaths.insert({aName, it->second + aName + "/"}).first;
-        }
-    }
-    if (it != mPaths.end()) result = it->second;
+    auto& storage = getInstance().mPaths;
+
+    auto it = storage.find(aName);
+    // if (it == storage.end())
+    // {
+    //     it = storage.find("default");
+    //     if (it != storage.end())
+    //     {
+    //         it = storage.insert({aName, it->second + aName + "/"}).first;
+    //     }
+    // }
+    if (it != storage.end()) result = it->second;
 
     return result;
 }
@@ -135,13 +139,16 @@ file::Path::generateConfigFolderPath() noexcept
 void
 file::Path::setPath(const std::string& aName, const std::string& aPath) noexcept
 {
-    mPaths[aName] = aPath;
+    getInstance().mPaths[aName] = aPath;
 }
 
 void
-file::Path::setDefault(const std::string& aPath) noexcept
+file::Path::addFolder(const std::string& aPath) noexcept
 {
-    setPath("default", aPath);
+    // setPath("default", aPath);
+
+    auto paths = getAllFoldersPathMap(aPath);
+    getInstance().mPaths.insert(paths.begin(), paths.end());
 }
 
 //--------------------------------------------------------------------------------

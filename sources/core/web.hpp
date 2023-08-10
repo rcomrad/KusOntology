@@ -22,12 +22,10 @@ public:
     void print() const noexcept;
 
 private:
-    // std::set<std::string> mTypes;
     std::map<std::string, Node> mWeb;
 
     std::unordered_set<std::string> mVariables;
 
-    // std::vector<std::string> process(const std::string& aStr) noexcept;
     std::unordered_set<std::string> process(const std::string& aStr) noexcept;
     std::unordered_set<std::string> process(const char*& aStr) noexcept;
 
@@ -44,22 +42,15 @@ private:
     std::unordered_set<std::string> expressionHandler(
         const std::string& aCommand, const std::string& aArgs) noexcept;
 
-    // std::unordered_set<std::string> assignmentHandler(
-    //     const std::string& aCommand, const std::string& aArgs) noexcept;
-
-    void createNode(const std::string& aName,
-                    Node::Type aType,
-                    const std::pair<std::string, std::string>& aLeave) noexcept;
-
-    void createTree(
-        const std::string& aName,
-        Node::Type aType,
-        const std::unordered_map<std::string, std::string>& aLeave) noexcept;
+    static std::unordered_map<std::string, std::string>
+    makeRelationMap() noexcept;
 
     void createEdge(const std::string& aFrom,
                     const std::string& aTo,
                     const std::string& aFromRelation,
                     Node::Type aFromType = Node::Type::Nun) noexcept;
+
+    void typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept;
 
     static void skipDefault(const char*& c) noexcept;
     static void skipAssaigment(const char*& c) noexcept;
