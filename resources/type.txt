@@ -1,5 +1,6 @@
 int
 long
+long long
 float
 double
 char

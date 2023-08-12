@@ -46,6 +46,9 @@ public:
     };
     static void normalize(std::string& aStr, Type aType) noexcept;
     static std::string normalize(const std::string& aStr, Type aType) noexcept;
+
+private:
+    static std::string getStr(const std::string& aStr, int aFrom) noexcept;
 };
 } // namespace file
 

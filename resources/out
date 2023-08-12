@@ -1,9 +1,13 @@
 cicle
 	child
 		cicle_0
+		cicle_1
 condition
 	child
 		if_0
+		if_1
+		if_2
+		if_3
 function
 	is
 		main
@@ -14,46 +18,73 @@ main
 		int
 	contain
 		cicle_0
+		cicle_1
 		expr_block_0
-		expr_block_1
+		expr_block_12
+		expr_block_6
+		if_0
 		max
-		min
+		n
+		num
 int
 	associated
 		main
 	child
 		i
+		n
+long long
+	child
 		max
-		min
+vector
+	child
+		num
 i
 	is
 		int
 	assigned
 		expr_block_2
 		expr_block_4
+		expr_block_7
+		expr_block_9
 	participate
+		expr_block_10
+		expr_block_11
 		expr_block_3
-		expr_block_5
+		expr_block_8
 	located
 		cicle_0
-	put_to
-		expr_block_6
+		cicle_1
+	get_from
+		expr_block_5
 max
 	is
-		int
-	get_from
-		expr_block_1
+		long long
+	assigned
+		expr_block_11
+		expr_block_6
 	participate
-		expr_block_3
+		expr_block_10
+		expr_block_12
 	located
 		main
-min
+n
 	is
 		int
-	get_from
-		expr_block_0
 	participate
-		expr_block_2
+		expr_block_0
+		expr_block_1
+		expr_block_3
+		expr_block_8
+	located
+		main
+num
+	is
+		vector
+	participate
+		expr_block_10
+		expr_block_11
+		expr_block_5
+		expr_block_6
 	located
 		main
 if_0
@@ -62,48 +93,113 @@ if_0
 	contain
 		cond_block_0_0
 	located
+		main
+if_1
+	is
+		condition
+	contain
+		cond_block_1_0
+	located
 		cicle_0
+if_2
+	is
+		condition
+	contain
+		cond_block_2_0
+	located
+		cicle_1
+if_3
+	is
+		condition
+	contain
+		cond_block_3_0
+	located
+		cicle_1
 cond_block_0_0
 	located
 		if_0
 	use
-		expr_block_5
+		expr_block_1
+cond_block_1_0
+	located
+		if_1
+	use
+		expr_block_3
+cond_block_2_0
+	located
+		if_2
+	use
+		expr_block_8
+cond_block_3_0
+	located
+		if_3
+	use
+		expr_block_10
 	contain
-		expr_block_6
+		expr_block_11
 cicle_0
 	is
 		cicle
 	contain
 		expr_block_2
-		expr_block_3
 		expr_block_4
+		expr_block_5
 		i
-		if_0
+		if_1
+	located
+		main
+cicle_1
+	is
+		cicle
+	contain
+		expr_block_7
+		expr_block_9
+		i
+		if_2
+		if_3
 	located
 		main
 expr_block_0
-	input
-		min
+	use
+		n
 	located
 		main
 expr_block_1
-	input
+	use
+		n
+	participate
+		cond_block_0_0
+expr_block_10
+	use
+		i
+		max
+		num
+	participate
+		cond_block_3_0
+expr_block_11
+	sets
+		max
+	use
+		i
+		num
+	located
+		cond_block_3_0
+expr_block_12
+	use
 		max
 	located
 		main
 expr_block_2
 	sets
 		i
-	use
-		min
 	located
 		cicle_0
 expr_block_3
 	use
 		i
-		max
-	located
-		cicle_0
+		n
+	participate
+		cond_block_1_0
 expr_block_4
 	sets
 		i
@@ -111,11 +207,31 @@ expr_block_4
 		cicle_0
 expr_block_5
 	use
-		i
-	participate
-		cond_block_0_0
-expr_block_6
-	output
+		num
+	input
 		i
 	located
-		cond_block_0_0
+		cicle_0
+expr_block_6
+	sets
+		max
+	use
+		num
+	located
+		main
+expr_block_7
+	sets
+		i
+	located
+		cicle_1
+expr_block_8
+	use
+		i
+		n
+	participate
+		cond_block_2_0
+expr_block_9
+	sets
+		i
+	located
+		cicle_1

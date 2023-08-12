@@ -8,6 +8,7 @@
 #include "file_data/file.hpp"
 #include "file_data/parser.hpp"
 #include "file_data/path.hpp"
+#include "file_data/variable_storage.hpp"
 
 core::Web::Web() noexcept
 {
@@ -17,9 +18,10 @@ core::Web::Web() noexcept
 void
 core::Web::create() noexcept
 {
-    auto code = file::File::getAllData(
-        file::Path::getPathUnsafe("resources", "source.cpp"));
-    int num = 0;
+    auto code = file::File::getAllData(file::Path::getPathUnsafe(
+        "resources",
+        file::VariableStorage::getInstance().getWordUnsafe("source")));
+    int num   = 0;
     for (auto& i : {"if", "else", "for", "while"})
     {
         while (true)
@@ -34,7 +36,7 @@ core::Web::create() noexcept
                     if (code[num] == ')') --cnt;
                     ++num;
                 }
-                 ++num;
+                ++num;
                 while (std::isspace(code[num])) ++num;
                 if (code[num] != '{')
                 {
@@ -107,10 +109,11 @@ core::Web::declarationHandler(const std::string& aCommand,
     mWeb[aCommand].mType = Node::Type::Type;
     for (auto& cur : parts)
     {
-        auto temp = file::Parser::slice(cur, " =");
+        auto temp = file::Parser::slice(cur, " ()=");
         auto name = temp[0];
 
-        if (cur.find('=') != std::string::npos)
+        if (cur.find('=') != std::string::npos /*||
+            cur.find('(') != std::string::npos*/)
         {
             // auto temp = expressionHandler("", cur);
             auto value = process(cur);
@@ -148,7 +151,15 @@ core::Web::cicleHandler(const std::string& aCommand,
 
     createEdge(curName, "cicle", "is"s, Node::Type::Cicle);
 
-    auto blocks = process(getInsides(aArgs));
+    auto insides = getInsides(aArgs);
+    auto num     = insides.find(';');
+    if (num != std::string::npos)
+    {
+        insides.insert(num + 1, "if (");
+        insides.insert(insides.find(';', num + 1), ")");
+    }
+
+    auto blocks = process(insides);
     for (auto& i : blocks)
     {
         createEdge(curName, i, "contain");
@@ -235,18 +246,11 @@ core::Web::expressionHandler(const std::string& aCommand,
 
     for (auto& i : parts)
     {
-        auto it1 = mVariables.find(i);
-        if (it1 != mVariables.end())
+        auto temp = file::Parser::slice(i, "[]");
+        for (int i = 0; i < temp.size(); ++i)
         {
-            createEdge(blockName, *it1, type);
-            flag = true;
-        }
-
-        auto it2 = methods.find(i);
-        if (it2 != methods.end())
-        {
-            createEdge(blockName, it2->second, "use");
-            flag = true;
+            flag |= usePart(mVariables, blockName, i ? type : "use", temp[i]);
+            flag |= usePart(methods, blockName, "use", temp[i]);
         }
     }
 
@@ -258,6 +262,26 @@ core::Web::expressionHandler(const std::string& aCommand,
     }
 
     return result;
+}
+
+std::string
+core::Web::getName(decltype(core::Web::mVariables.begin()) aPtr) noexcept
+{
+    return *aPtr;
+}
+std::string
+core::Web::getName(
+    std::unordered_map<std::string, std::string>::const_iterator aPtr) noexcept
+{
+    return aPtr->second;
+}
+
+std::unordered_set<std::string>
+core::Web::containerHandler(const std::string& aCommand,
+                            const std::string& aArgs) noexcept
+{
+    std::string temp = aArgs.substr(aArgs.rfind('>') + 1, aArgs.size());
+    return declarationHandler(aCommand, temp);
 }
 
 std::string
@@ -393,11 +417,18 @@ core::Web::getRouter() noexcept
             {"expression", &core::Web::expressionHandler}
     };
 
-    auto types = file::File::getWordsSet(
+    auto types = file::File::getLines(
         file::Path::getPathUnsafe("resources", "type.txt"));
     for (auto& i : types)
     {
         result[i] = &core::Web::typeHandler;
+    }
+
+    auto containers = file::File::getLines(
+        file::Path::getPathUnsafe("resources", "containers.txt"));
+    for (auto& i : containers)
+    {
+        result[i] = &core::Web::containerHandler;
     }
 
     return result;

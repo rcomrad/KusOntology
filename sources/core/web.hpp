@@ -38,11 +38,34 @@ private:
         const std::string& aCommand, const std::string& aArgs) noexcept;
     std::unordered_set<std::string> expressionHandler(
         const std::string& aCommand, const std::string& aArgs) noexcept;
+    std::unordered_set<std::string> containerHandler(
+        const std::string& aCommand, const std::string& aArgs) noexcept;
 
     std::unordered_set<std::string> process(const std::string& aStr) noexcept;
     std::unordered_set<std::string> process(const char*& aStr) noexcept;
     static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
     getRouter() noexcept;
+
+    static std::string getName(decltype(mVariables.begin()) aPtr) noexcept;
+    static std::string getName(
+        std::unordered_map<std::string, std::string>::const_iterator
+            aPtr) noexcept;
+
+    template <typename T>
+    bool usePart(const T& aCont,
+                 const std::string& aBlockName,
+                 const std::string& aType,
+                 const std::string& aName) noexcept
+    {
+        bool result = false;
+        auto it     = aCont.find(aName);
+        if (it != aCont.end())
+        {
+            createEdge(aBlockName, getName(it), aType);
+            result = true;
+        }
+        return result;
+    }
 
     static std::unordered_map<std::string, std::string>
     makeRelationMap() noexcept;

@@ -14,19 +14,28 @@ file::Parser::makeVariable(const std::string& aStr) noexcept
     {
         Variable temp;
 
-        for (size_t i = 0; i < num; ++i)
-        {
-            if (std::islower(aStr[i]) || std::isupper(aStr[i]) ||
-                aStr[i] == '_')
-            {
-                temp.name += aStr[i];
-            }
-        }
-
-        temp.value.str = aStr.substr(num + 2, aStr.size());
+        temp.name = getStr(aStr, 0);
+        temp.value.str = getStr(aStr, num + 1);
+        
         normalize(temp.name, Type::Lower);
         result = std::move(temp);
     }
+
+    return result;
+}
+
+std::string
+file::Parser::getStr(const std::string& aStr, int aFrom) noexcept
+{
+    std::string result;
+
+    size_t i = aFrom;
+    while (std::isspace(aStr[i])) ++i;
+    while (aStr[i] != '=' && aStr[i] != '\0')
+    {
+        result += aStr[i++];
+    }
+    while (std::isspace(result.back())) result.pop_back();
 
     return result;
 }
