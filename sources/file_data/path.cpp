@@ -6,7 +6,7 @@
 
 #include "file.hpp"
 #include "parser.hpp"
-#include "variable_storage.hpp"
+// #include "variable_storage.hpp"
 
 //--------------------------------------------------------------------------------
 
@@ -34,24 +34,25 @@ file::Path::getInstance() noexcept
 void
 file::Path::reset() noexcept
 {
-    auto& storage = getInstance().mPaths;
+    mPaths["exe"]  = getExecutablePath();
+    mPaths["main"] = calculateMainPath(mPaths["exe"]);
+    auto temp      = getAllFoldersPathMap(mPaths["main"]);
+    mPaths.insert(temp.begin(), temp.end());
 
-    setPath("exe", getExecutablePath());
-    setPath("main", calculateMainPath(storage["exe"]));
-    // TODO: add all folders from project?
-    // setPath("config", mPaths["main"] + "config/");
-    auto temp = getAllFoldersPathMap(getPath("main").value());
-    storage.insert(temp.begin(), temp.end());
+    // auto& var     = file::VariableStorage::getInstance();
+    // auto def_path = var.getWord("additional_path");
+    // if (def_path.has_value())
+    // {
+    //     auto add = getAllFoldersPathMap(def_path.value());
+    //     mPaths.insert(add.begin(), add.end());
+    // }
 
-    auto& var     = file::VariableStorage::getInstance();
-    auto def_path = var.getWord("default_path");
-    if (def_path.has_value())
-    {
-        setDefault(def_path.value());
-    }
-
-    auto pathFile = getPath("config").value() + "path.conf";
+    auto pathFile = mPaths["config"] + "path.conf";
     auto paths    = file::Parser::getVariablesFromFile(pathFile);
+    if (paths.empty())
+    {
+        dom::writeWarning("Path file doesn't exist or empty");
+    }
     for (auto& var : paths)
     {
         if (var.value.getType() != file::Value::Type::String)
@@ -60,12 +61,7 @@ file::Path::reset() noexcept
             continue;
         }
 
-        storage[var.name] = var.value;
-    }
-
-    if (storage.empty())
-    {
-        dom::writeError("No paths file detected");
+        mPaths[var.name] = var.value;
     }
 }
 
@@ -79,14 +75,6 @@ file::Path::getPath(const std::string& aName) noexcept
     auto& storage = getInstance().mPaths;
 
     auto it = storage.find(aName);
-    // if (it == storage.end())
-    // {
-    //     it = storage.find("default");
-    //     if (it != storage.end())
-    //     {
-    //         it = storage.insert({aName, it->second + aName + "/"}).first;
-    //     }
-    // }
     if (it != storage.end()) result = it->second;
 
     return result;
@@ -130,23 +118,16 @@ file::Path::getPathUnsafe(const std::string& aFolder,
     return result;
 }
 
-std::string
-file::Path::generateConfigFolderPath() noexcept
-{
-    return calculateMainPath(getExecutablePath()) + "config/";
-}
-
-void
-file::Path::setPath(const std::string& aName, const std::string& aPath) noexcept
-{
-    getInstance().mPaths[aName] = aPath;
-}
+// void
+// file::Path::setPath(const std::string& aName, const std::string& aPath)
+// noexcept
+// {
+//     getInstance().mPaths[aName] = aPath;
+// }
 
 void
 file::Path::addFolder(const std::string& aPath) noexcept
 {
-    // setPath("default", aPath);
-
     auto paths = getAllFoldersPathMap(aPath);
     getInstance().mPaths.insert(paths.begin(), paths.end());
 }

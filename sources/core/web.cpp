@@ -178,12 +178,27 @@ core::Web::expressionHandler(const std::string& aCommand,
     // TODO: ++ -- as asigment
     bool flag  = false;
     auto parts = file::Parser::slice(aArgs, " \t\n*/=<>");
-    if (aArgs.find('=') != std::string::npos && !parts.empty())
+
+    if (parts[0].find("++") != std::string::npos ||
+        parts[0].find("--") != std::string::npos ||
+        aArgs.find(" = ") != std::string::npos && !parts.empty())
     {
-        createEdge(blockName, parts[0], "sets");
+        createEdge(blockName, file::Parser::slice(parts[0], "+-")[0], "sets");
         parts[0].clear();
         flag = true;
     }
+    // for (auto& i : parts)
+    // {
+    //     bool
+    //     if ()
+    //     {
+    //         i.erase(i.find("+"), 2);
+    //     }
+    //     if (i.find("--") != std::string::npos)
+    //     {
+    //         i.erase(i.find("-"), 2);
+    //     }
+    // }
 
     for (auto& i : parts)
     {
@@ -224,7 +239,7 @@ core::Web::getInsides(const std::string& aStr) noexcept
 }
 
 std::unordered_map<std::string, std::string>
-core::Web::makeRelationMap()
+core::Web::makeRelationMap() noexcept
 {
     std::unordered_map<std::string, std::string> result = {
         {"use",     "participate"},
@@ -252,6 +267,9 @@ core::Web::createEdge(const std::string& aFrom,
 {
     static std::unordered_map<std::string, std::string> relationSwitch =
         makeRelationMap();
+
+    mWeb[aFrom];
+    mWeb[aTo];
 
     auto& from = *mWeb.find(aFrom);
     auto& to   = *mWeb.find(aTo);
@@ -333,16 +351,11 @@ core::Web::process(const std::string& aStr) noexcept
     return process(ptr);
 }
 
-std::unordered_set<std::string>
-core::Web::process(const char*& aStr) noexcept
+std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
+core::Web::getRouter() noexcept
 {
-    std::unordered_set<std::string> result;
-
-    static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
-        router = {
-            {"int",        &core::Web::typeHandler      },
-            {"float",      &core::Web::typeHandler      },
-            {"double",     &core::Web::typeHandler      },
+    std::unordered_map<std::string, decltype(&core::Web::typeHandler)> result =
+        {
             {"for",        &core::Web::cicleHandler     },
             {"while",      &core::Web::cicleHandler     },
             {"if",         &core::Web::conditionHandler },
@@ -351,10 +364,32 @@ core::Web::process(const char*& aStr) noexcept
             {"expression", &core::Web::expressionHandler}
     };
 
-    for (; *aStr != '\0' && *aStr != '}'; ++aStr)
+    auto types = file::File::getWordsSet(
+        file::Path::getPathUnsafe("resources", "type.txt"));
+    for (auto& i : types)
+    {
+        result[i] = &core::Web::typeHandler;
+    }
+
+    return result;
+}
+
+std::unordered_set<std::string>
+core::Web::process(const char*& aStr) noexcept
+{
+    std::unordered_set<std::string> result;
+
+    static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
+        router = getRouter();
+
+    while (*aStr != '\0' && *aStr != '}')
     {
         std::string curStr;
-        if (std::isspace(*aStr)) continue;
+        if (std::isspace(*aStr))
+        {
+            ++aStr;
+            continue;
+        }
 
         while (*aStr != '\0')
         {
@@ -371,10 +406,11 @@ core::Web::process(const char*& aStr) noexcept
                 it = router.find(curStr);
             }
             std::reverse(args.begin(), args.end());
-            
+
             if (it == router.end())
             {
-                it = router.find("expression");
+                it     = router.find("expression");
+                curStr = "expression";
             }
 
             auto temp = (this->*it->second)(curStr, args);

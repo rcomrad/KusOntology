@@ -16,8 +16,6 @@ class Path
 public:
     HOLY_TRINITY_SINGLE(Path);
 
-    static void reset() noexcept;
-
     static boost::optional<const std::string&> getPath(
         const std::string& aName) noexcept;
     static std::optional<std::string> getPath(
@@ -25,10 +23,8 @@ public:
     static std::string getPathUnsafe(const std::string& aFolder,
                                      const std::string& aName) noexcept;
 
-    static std::string generateConfigFolderPath() noexcept;
-
-    static void setPath(const std::string& aName,
-                        const std::string& aPath) noexcept;
+    // void setPath(const std::string& aName, const std::string& aPath)
+    // noexcept;
     static void addFolder(const std::string& aPath) noexcept;
 
     static std::vector<std::string> getAllContentPaths(
@@ -42,6 +38,8 @@ public:
 private:
     Path() noexcept;
     static Path& getInstance() noexcept;
+
+    void reset() noexcept;
 
     static std::string calculateMainPath(const std::string& aPath) noexcept;
     static std::string getExecutablePath() noexcept;

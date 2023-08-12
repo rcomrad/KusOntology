@@ -98,8 +98,16 @@ file::File::getWordsSet(const std::string& aFileName,
                         bool aIsCritical,
                         std::function<bool(char)> funk) noexcept
 {
+    std::unordered_set<std::string> result;
     auto words = getWords(aFileName, aIsCritical, funk);
-    return std::unordered_set<std::string>(words.begin(), words.end());
+    for (auto&& i : words)
+    {
+        for (auto&& j : i)
+        {
+            result.insert(std::move(j));
+        }
+    }
+    return result;
 }
 
 std::string
@@ -109,11 +117,11 @@ file::File::writeData(const std::string& aFolderName,
 {
     std::string resultFileName = "";
 
-    auto path = Path::getInstance().getPath(aFolderName);
+    auto path = Path::getPath(aFolderName);
     if (!path)
     {
         dom::writeError("No such folder (", aFolderName, ")");
-        path = Path::getInstance().getPath("upload");
+        path = Path::getPath("upload");
     }
 
     if (path)

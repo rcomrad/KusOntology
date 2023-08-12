@@ -70,7 +70,7 @@ private:
             if (temp[i].back() != '(' && temp[i + 1].front() != ')' &&
                 temp[i].back() != '\'' && temp[i + 1].front() != '\'')
             {
-                str += ' ';
+                temp[i] += ' ';
             }
         }
         for (auto&& i : temp)

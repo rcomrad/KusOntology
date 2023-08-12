@@ -6,8 +6,8 @@
 #include <array>
 #include <functional>
 #include <map>
-#include <set>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 //--------------------------------------------------------------------------------

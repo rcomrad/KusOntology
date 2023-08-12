@@ -26,9 +26,6 @@ private:
 
     std::unordered_set<std::string> mVariables;
 
-    std::unordered_set<std::string> process(const std::string& aStr) noexcept;
-    std::unordered_set<std::string> process(const char*& aStr) noexcept;
-
     std::unordered_set<std::string> typeHandler(
         const std::string& aCommand, const std::string& aArgs) noexcept;
     std::unordered_set<std::string> declarationHandler(
@@ -41,6 +38,11 @@ private:
         const std::string& aCommand, const std::string& aArgs) noexcept;
     std::unordered_set<std::string> expressionHandler(
         const std::string& aCommand, const std::string& aArgs) noexcept;
+
+    std::unordered_set<std::string> process(const std::string& aStr) noexcept;
+    std::unordered_set<std::string> process(const char*& aStr) noexcept;
+    static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
+    getRouter() noexcept;
 
     static std::unordered_map<std::string, std::string>
     makeRelationMap() noexcept;

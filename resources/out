@@ -1,14 +1,14 @@
+cicle
+	child
+		cicle_0
 condition
 	child
 		if_0
-for
-	child
-		cicle_0
 function
-	child
+	is
 		main
 main
-	is
+	child
 		function
 	return
 		int
@@ -30,10 +30,10 @@ i
 		int
 	assigned
 		expr_block_2
-		expr_block_5
+		expr_block_4
 	participate
 		expr_block_3
-		expr_block_4
+		expr_block_5
 	located
 		cicle_0
 max
@@ -49,6 +49,7 @@ min
 		int
 	participate
 		expr_block_0
+		expr_block_2
 	located
 		main
 if_0
@@ -65,7 +66,7 @@ cond_block_0_0
 		expr_block_5
 cicle_0
 	is
-		for
+		cicle
 	contain
 		expr_block_2
 		expr_block_3
@@ -87,6 +88,8 @@ expr_block_1
 expr_block_2
 	sets
 		i
+	use
+		min
 	located
 		cicle_0
 expr_block_3
@@ -96,12 +99,12 @@ expr_block_3
 	located
 		cicle_0
 expr_block_4
-	use
+	sets
 		i
 	located
 		cicle_0
 expr_block_5
-	sets
+	use
 		i
 	participate
 		cond_block_0_0

@@ -24,9 +24,15 @@ void
 file::VariableStorage::reloadSettings() noexcept
 {
     auto settings = file::Parser::getVariablesFromFile(
-        file::Path::generateConfigFolderPath() + "main_settings.conf", true);
+        file::Path::getPathUnsafe("config", "main_settings.conf"), true);
     for (auto& var : settings)
     {
+        if (var.name == "additional_path")
+        {
+            file::Path::addFolder(var.value);
+            continue;
+        }
+
         switch (var.value.getType())
         {
             case file::Value::Type::Int:
