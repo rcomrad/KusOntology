@@ -1,0 +1,7 @@
+input get_from
+output put_to
+use participate
+sets assigned
+is child
+contain located
+return associated

@@ -36,19 +36,23 @@ i
 		expr_block_5
 	located
 		cicle_0
+	put_to
+		expr_block_6
 max
 	is
 		int
-	participate
+	get_from
 		expr_block_1
+	participate
 		expr_block_3
 	located
 		main
 min
 	is
 		int
-	participate
+	get_from
 		expr_block_0
+	participate
 		expr_block_2
 	located
 		main
@@ -64,6 +68,8 @@ cond_block_0_0
 		if_0
 	use
 		expr_block_5
+	contain
+		expr_block_6
 cicle_0
 	is
 		cicle
@@ -76,12 +82,12 @@ cicle_0
 	located
 		main
 expr_block_0
-	use
+	input
 		min
 	located
 		main
 expr_block_1
-	use
+	input
 		max
 	located
 		main
@@ -107,4 +113,9 @@ expr_block_5
 	use
 		i
 	participate
+		cond_block_0_0
+expr_block_6
+	output
+		i
+	located
 		cond_block_0_0

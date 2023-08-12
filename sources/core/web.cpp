@@ -19,6 +19,35 @@ core::Web::create() noexcept
 {
     auto code = file::File::getAllData(
         file::Path::getPathUnsafe("resources", "source.cpp"));
+    int num = 0;
+    for (auto& i : {"if", "else", "for", "while"})
+    {
+        while (true)
+        {
+            num = code.find(i, num);
+            if (num != std::string::npos)
+            {
+                int cnt = 0;
+                while (!(code[num] == ')' && cnt == 1))
+                {
+                    if (code[num] == '(') ++cnt;
+                    if (code[num] == ')') --cnt;
+                    ++num;
+                }
+                 ++num;
+                while (std::isspace(code[num])) ++num;
+                if (code[num] != '{')
+                {
+                    code[num - 1]                 = '{';
+                    code[code.find(';', num) + 1] = '}';
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
     process(code);
 }
 
@@ -200,12 +229,16 @@ core::Web::expressionHandler(const std::string& aCommand,
     //     }
     // }
 
+    std::string type = "use";
+    if (parts[0] == "cin") type = "input";
+    if (parts[0] == "cout") type = "output";
+
     for (auto& i : parts)
     {
         auto it1 = mVariables.find(i);
         if (it1 != mVariables.end())
         {
-            createEdge(blockName, *it1, "use");
+            createEdge(blockName, *it1, type);
             flag = true;
         }
 
@@ -241,13 +274,9 @@ core::Web::getInsides(const std::string& aStr) noexcept
 std::unordered_map<std::string, std::string>
 core::Web::makeRelationMap() noexcept
 {
-    std::unordered_map<std::string, std::string> result = {
-        {"use",     "participate"},
-        {"sets",    "assigned"   },
-        {"is",      "child"      },
-        {"contain", "located"    },
-        {"return",  "associated" }
-    };
+    std::unordered_map<std::string, std::string> result =
+        file::File::getWordsMap(
+            file::Path::getPathUnsafe("resources", "relation.txt"));
 
     std::unordered_map<std::string, std::string> temp;
     for (auto& i : result)
