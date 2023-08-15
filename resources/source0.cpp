@@ -5,8 +5,8 @@ using namespace std;
 int
 main()
 {
+    int n, c1 = 0, c2 = 4;
     cin >> n;
-    int n;
     if (n == 0) return 0;
     vector<long long> num(n);
 

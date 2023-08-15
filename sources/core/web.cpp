@@ -10,18 +10,12 @@
 #include "file_data/path.hpp"
 #include "file_data/variable_storage.hpp"
 
-core::Web::Web() noexcept
+core::Web::Web(const std::string& aFileName) noexcept
+    : mCicleNumber(0), mIfNumber(-1), mBlockNumber(0), mExpressionNumber(0)
 {
-    create();
-}
-
-void
-core::Web::create() noexcept
-{
-    auto code = file::File::getAllData(file::Path::getPathUnsafe(
-        "resources",
-        file::VariableStorage::getInstance().getWordUnsafe("source")));
-    int num   = 0;
+    auto code = file::File::getAllData(
+        file::Path::getPathUnsafe("resources", aFileName));
+    int num = 0;
     for (auto& i : {"if", "else", "for", "while"})
     {
         while (true)
@@ -51,6 +45,13 @@ core::Web::create() noexcept
         }
     }
     process(code);
+}
+
+std::map<std::string, core::Node>
+core::Web::processFile(const std::string& aFileName) noexcept
+{
+    Web w(aFileName);
+    return w.mWeb;
 }
 
 void
@@ -146,8 +147,7 @@ std::unordered_set<std::string>
 core::Web::cicleHandler(const std::string& aCommand,
                         const std::string& aArgs) noexcept
 {
-    static int cicleNumber = 0;
-    std::string curName    = "cicle_" + std::to_string(cicleNumber++);
+    std::string curName = "cicle_" + std::to_string(mCicleNumber++);
 
     createEdge(curName, "cicle", "is"s, Node::Type::Cicle);
 
@@ -172,21 +172,19 @@ std::unordered_set<std::string>
 core::Web::conditionHandler(const std::string& aCommand,
                             const std::string& aArgs) noexcept
 {
-    static int ifNumber    = -1;
-    static int blockNumber = 0;
     if (aCommand == "if")
     {
-        blockNumber = 0;
-        ++ifNumber;
+        mBlockNumber = 0;
+        ++mIfNumber;
     }
     else
     {
-        ++blockNumber;
+        ++mBlockNumber;
     }
 
-    std::string ifName    = "if_" + std::to_string(ifNumber);
-    std::string blockName = "cond_block_" + std::to_string(ifNumber) + "_" +
-                            std::to_string(blockNumber);
+    std::string ifName    = "if_" + std::to_string(mIfNumber);
+    std::string blockName = "cond_block_" + std::to_string(mIfNumber) + "_" +
+                            std::to_string(mBlockNumber);
 
     createEdge(ifName, "condition", "is", Node::Type::Condition);
     createEdge(blockName, ifName, "located", Node::Type::ConditionBlock);
@@ -211,8 +209,9 @@ core::Web::expressionHandler(const std::string& aCommand,
         file::File::getWordsMap(
             file::Path::getPathUnsafe("resources", "method.txt"));
 
-    static int expressionNumber = 0;
-    std::string blockName = "expr_block_" + std::to_string(expressionNumber);
+    std::string expNumStr = std::to_string(mExpressionNumber);
+    while (expNumStr.size() < 3) expNumStr = "0" + expNumStr;
+    std::string blockName = "expr_block_" + expNumStr;
     dom::writeInfo(blockName, "<->", aCommand, aArgs);
 
     // TODO: ++ -- as asigment
@@ -247,10 +246,10 @@ core::Web::expressionHandler(const std::string& aCommand,
     for (auto& i : parts)
     {
         auto temp = file::Parser::slice(i, "[]");
-        for (int i = 0; i < temp.size(); ++i)
+        for (int j = 0; j < temp.size(); ++j)
         {
-            flag |= usePart(mVariables, blockName, i ? type : "use", temp[i]);
-            flag |= usePart(methods, blockName, "use", temp[i]);
+            flag |= usePart(mVariables, blockName, j ? "use" : type, temp[j]);
+            flag |= usePart(methods, blockName, "use", temp[j]);
         }
     }
 
@@ -258,7 +257,7 @@ core::Web::expressionHandler(const std::string& aCommand,
     {
         mWeb[blockName].mType = Node::Type::Expression;
         result                = {blockName};
-        ++expressionNumber;
+        ++mExpressionNumber;
     }
 
     return result;

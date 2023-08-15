@@ -6,6 +6,7 @@ set(
 
     main.cpp
 
+    node.cpp
     node.hpp
 
     web.cpp

@@ -17,11 +17,15 @@ main
 	return
 		int
 	contain
+		c1
+		c2
 		cicle_0
 		cicle_1
-		expr_block_0
-		expr_block_12
-		expr_block_6
+		expr_block_000
+		expr_block_001
+		expr_block_002
+		expr_block_008
+		expr_block_014
 		if_0
 		max
 		n
@@ -30,6 +34,8 @@ int
 	associated
 		main
 	child
+		c1
+		c2
 		i
 		n
 long long
@@ -38,53 +44,69 @@ long long
 vector
 	child
 		num
+c1
+	is
+		int
+	assigned
+		expr_block_000
+	located
+		main
+c2
+	is
+		int
+	assigned
+		expr_block_001
+	located
+		main
 i
 	is
 		int
 	assigned
-		expr_block_2
-		expr_block_4
-		expr_block_7
-		expr_block_9
+		expr_block_004
+		expr_block_006
+		expr_block_009
+		expr_block_011
 	participate
-		expr_block_10
-		expr_block_11
-		expr_block_3
-		expr_block_8
+		expr_block_005
+		expr_block_007
+		expr_block_010
+		expr_block_012
+		expr_block_013
 	located
 		cicle_0
 		cicle_1
-	get_from
-		expr_block_5
 max
 	is
 		long long
 	assigned
-		expr_block_11
-		expr_block_6
+		expr_block_008
+		expr_block_013
 	participate
-		expr_block_10
-		expr_block_12
+		expr_block_012
+	put_to
+		expr_block_014
 	located
 		main
 n
 	is
 		int
+	get_from
+		expr_block_002
 	participate
-		expr_block_0
-		expr_block_1
-		expr_block_3
-		expr_block_8
+		expr_block_003
+		expr_block_005
+		expr_block_010
 	located
 		main
 num
 	is
 		vector
+	get_from
+		expr_block_007
 	participate
-		expr_block_10
-		expr_block_11
-		expr_block_5
-		expr_block_6
+		expr_block_008
+		expr_block_012
+		expr_block_013
 	located
 		main
 if_0
@@ -119,31 +141,31 @@ cond_block_0_0
 	located
 		if_0
 	use
-		expr_block_1
+		expr_block_003
 cond_block_1_0
 	located
 		if_1
 	use
-		expr_block_3
+		expr_block_005
 cond_block_2_0
 	located
 		if_2
 	use
-		expr_block_8
+		expr_block_010
 cond_block_3_0
 	located
 		if_3
 	use
-		expr_block_10
+		expr_block_012
 	contain
-		expr_block_11
+		expr_block_013
 cicle_0
 	is
 		cicle
 	contain
-		expr_block_2
-		expr_block_4
-		expr_block_5
+		expr_block_004
+		expr_block_006
+		expr_block_007
 		i
 		if_1
 	located
@@ -152,86 +174,96 @@ cicle_1
 	is
 		cicle
 	contain
-		expr_block_7
-		expr_block_9
+		expr_block_009
+		expr_block_011
 		i
 		if_2
 		if_3
 	located
 		main
-expr_block_0
-	use
+expr_block_000
+	sets
+		c1
+	located
+		main
+expr_block_001
+	sets
+		c2
+	located
+		main
+expr_block_002
+	input
 		n
 	located
 		main
-expr_block_1
+expr_block_003
 	use
 		n
 	participate
 		cond_block_0_0
-expr_block_10
-	use
-		i
-		max
-		num
-	participate
-		cond_block_3_0
-expr_block_11
-	sets
-		max
-	use
-		i
-		num
-	located
-		cond_block_3_0
-expr_block_12
-	use
-		max
-	located
-		main
-expr_block_2
+expr_block_004
 	sets
 		i
 	located
 		cicle_0
-expr_block_3
+expr_block_005
 	use
 		i
 		n
 	participate
 		cond_block_1_0
-expr_block_4
+expr_block_006
 	sets
 		i
 	located
 		cicle_0
-expr_block_5
-	use
-		num
+expr_block_007
 	input
+		num
+	use
 		i
 	located
 		cicle_0
-expr_block_6
+expr_block_008
 	sets
 		max
 	use
 		num
 	located
 		main
-expr_block_7
+expr_block_009
 	sets
 		i
 	located
 		cicle_1
-expr_block_8
+expr_block_010
 	use
 		i
 		n
 	participate
 		cond_block_2_0
-expr_block_9
+expr_block_011
 	sets
 		i
 	located
 		cicle_1
+expr_block_012
+	use
+		i
+		max
+		num
+	participate
+		cond_block_3_0
+expr_block_013
+	sets
+		max
+	use
+		i
+		num
+	located
+		cond_block_3_0
+expr_block_014
+	output
+		max
+	located
+		main

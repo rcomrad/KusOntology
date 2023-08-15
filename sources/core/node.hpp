@@ -29,6 +29,8 @@ public:
 
     Type mType;
     std::unordered_map<std::string, std::set<std::string>> mLeaves;
+
+    bool operator==(const Node& aOther) const noexcept;
 };
 } // namespace core
 

@@ -14,10 +14,11 @@ namespace core
 class Web
 {
 public:
-    Web() noexcept;
+    Web(const std::string& aFileName) noexcept;
     HOLY_TRINITY_SINGLE(Web);
 
-    void create() noexcept;
+    static std::map<std::string, Node> processFile(
+        const std::string& aFileName) noexcept;
 
     void print() const noexcept;
 
@@ -84,6 +85,11 @@ private:
     static bool check(const char*& aStr) noexcept;
 
     static std::string getInsides(const std::string& aStr) noexcept;
+
+    int mCicleNumber;
+    int mIfNumber;
+    int mBlockNumber;
+    int mExpressionNumber;
 };
 } // namespace core
 
