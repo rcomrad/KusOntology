@@ -1,0 +1,48 @@
+function
+	is
+		main
+main
+	child
+		function
+	return
+		int
+	contain
+		expr_block_000
+		expr_block_001
+		expr_block_002
+		min
+int
+	associated
+		main
+	child
+		min
+min
+	assigned
+		expr_block_002
+	is
+		int
+	put_to
+		expr_block_000
+	get_from
+		expr_block_001
+	participate
+		expr_block_002
+	located
+		main
+expr_block_000
+	output
+		min
+	located
+		main
+expr_block_001
+	input
+		min
+	located
+		main
+expr_block_002
+	sets
+		min
+	use
+		min
+	located
+		main

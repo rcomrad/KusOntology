@@ -1,0 +1,134 @@
+cicle
+	child
+		cicle_0
+condition
+	child
+		if_0
+		if_1
+function
+	is
+		main
+main
+	child
+		function
+	return
+		int
+	contain
+		cicle_0
+		expr_block_000
+		expr_block_001
+		max
+		min
+int
+	associated
+		main
+	child
+		i
+		max
+		min
+i
+	is
+		int
+	assigned
+		expr_block_002
+		expr_block_004
+	participate
+		expr_block_003
+		expr_block_005
+	located
+		cicle_0
+	put_to
+		expr_block_006
+max
+	is
+		int
+	get_from
+		expr_block_001
+	participate
+		expr_block_003
+	located
+		main
+min
+	is
+		int
+	get_from
+		expr_block_000
+	participate
+		expr_block_002
+	located
+		main
+if_0
+	is
+		condition
+	contain
+		cond_block_0_0
+	located
+		cicle_0
+if_1
+	is
+		condition
+	contain
+		cond_block_1_0
+	located
+		cicle_0
+cond_block_0_0
+	located
+		if_0
+	use
+		expr_block_003
+cond_block_1_0
+	located
+		if_1
+	use
+		expr_block_005
+	contain
+		expr_block_006
+cicle_0
+	is
+		cicle
+	contain
+		expr_block_002
+		expr_block_004
+		i
+		if_0
+		if_1
+	located
+		main
+expr_block_000
+	input
+		min
+	located
+		main
+expr_block_001
+	input
+		max
+	located
+		main
+expr_block_002
+	sets
+		i
+	use
+		min
+	located
+		cicle_0
+expr_block_003
+	use
+		i
+		max
+	participate
+		cond_block_0_0
+expr_block_004
+	sets
+		i
+	located
+		cicle_0
+expr_block_005
+	use
+		i
+	participate
+		cond_block_1_0
+expr_block_006
+	output
+		i
+	located
+		cond_block_1_0

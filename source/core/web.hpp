@@ -22,7 +22,11 @@ public:
 
     void print() const noexcept;
 
+    void makeMatrix() const noexcept;
+
 private:
+    std::string mFileName;
+
     std::map<std::string, Node> mWeb;
 
     std::unordered_set<std::string> mVariables;
@@ -46,6 +50,12 @@ private:
     std::unordered_set<std::string> process(const char*& aStr) noexcept;
     static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
     getRouter() noexcept;
+
+    static std::unordered_map<std::string, int> getCodes() noexcept;
+
+    std::vector<long long> recurrentSearch(
+        std::vector<std::vector<int>> aTable,
+        std::vector<long long> attributes) const noexcept;
 
     static std::string getName(decltype(mVariables.begin()) aPtr) noexcept;
     static std::string getName(
@@ -78,10 +88,6 @@ private:
 
     void typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept;
 
-    static void skipDefault(const char*& c) noexcept;
-    static void skipAssaigment(const char*& c) noexcept;
-    static void skipCicle(const char*& c) noexcept;
-
     static bool check(const char*& aStr) noexcept;
 
     static std::string getInsides(const std::string& aStr) noexcept;
@@ -90,6 +96,8 @@ private:
     int mIfNumber;
     int mBlockNumber;
     int mExpressionNumber;
+
+    std::string mExprInfo;
 };
 } // namespace core
 

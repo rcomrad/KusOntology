@@ -1,5 +1,6 @@
 #include "file.hpp"
 
+#include <filesystem>
 #include <fstream>
 
 #include "domain/log.hpp"
@@ -12,8 +13,14 @@ file::File::getAllData(const std::string& aFileName, bool aIsCritical) noexcept
     std::ifstream ios(aFileName);
     if (!ios.is_open())
     {
-        dom::writeError("No such file (", aFileName, ")");
-        if (aIsCritical) exit(0);
+        if (aIsCritical)
+        {
+            dom::writeError("No such file (", aFileName, ")");
+        }
+        else
+        {
+            dom::writeWarning("No such file (", aFileName, ")");
+        }
     }
     else
     {
@@ -110,38 +117,37 @@ file::File::getWordsSet(const std::string& aFileName,
     return result;
 }
 
-std::string
-file::File::writeData(const std::string& aFolderName,
-                      const std::string& aFileName,
+void
+file::File::writeData(const std::string& aFileName,
                       const std::string& aData) noexcept
 {
-    std::string resultFileName = "";
-
-    auto path = Path::getPath(aFolderName);
-    if (!path)
+    std::ofstream out(aFileName);
+    if (out.is_open())
     {
-        dom::writeError("No such folder (", aFolderName, ")");
-        path = Path::getPath("upload");
-    }
-
-    if (path)
-    {
-        std::string pathPrefix = path.value();
-        std::string filePath;
-
-        resultFileName = aFileName;
-        filePath       = pathPrefix + resultFileName;
-
-        std::ofstream out(filePath);
         out << aData;
         out.close();
     }
     else
     {
-        dom::writeError("No upload folder");
+        dom::writeError("Can't create file", aFileName);
+    }
+}
+
+std::optional<std::string>
+file::File::writeData(const std::string& aFolderName,
+                      const std::string& aFileName,
+                      const std::string& aData) noexcept
+{
+    std::optional<std::string> result;
+
+    auto path = Path::openFolder(aFolderName);
+    if (path.has_value())
+    {
+        result = path.value() + aFileName;
+        writeData(result.value(), aData);
     }
 
-    return resultFileName;
+    return result;
 }
 
 bool

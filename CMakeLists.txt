@@ -31,13 +31,13 @@ find_package(Boost REQUIRED)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 
 # Include cmake scripts
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake_scripts/cmake_scripts.cmake)
-include(${CMAKE_CURRENT_SOURCE_DIR}/sources/sources.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake_script/cmake_script.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/source/source.cmake)
 
 # Sources include
 get_sources(SOURCES_LIST ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(${PROJECT_NAME} ${SOURCES_LIST})
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/sources)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/source)
 
 #  Compiler defenitions
 if    (${OS} MATCHES "LINUS_LINUX")

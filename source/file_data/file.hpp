@@ -6,6 +6,7 @@
 #include <array>
 #include <functional>
 #include <map>
+#include <optional>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -39,9 +40,12 @@ public:
         bool aIsCritical               = false,
         std::function<bool(char)> funk = &file::File::isSeparator) noexcept;
 
-    static std::string writeData(const std::string& aFolderName,
-                                 const std::string& aFileName,
-                                 const std::string& aData) noexcept;
+    static void writeData(const std::string& aFileName,
+                          const std::string& aData) noexcept;
+    static std::optional<std::string> writeData(
+        const std::string& aFolderName,
+        const std::string& aFileName,
+        const std::string& aData) noexcept;
 
 private:
     static bool isSeparator(char c) noexcept;

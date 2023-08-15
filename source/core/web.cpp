@@ -13,9 +13,10 @@
 core::Web::Web(const std::string& aFileName) noexcept
     : mCicleNumber(0), mIfNumber(-1), mBlockNumber(0), mExpressionNumber(0)
 {
-    auto code = file::File::getAllData(
-        file::Path::getPathUnsafe("resources", aFileName));
-    int num = 0;
+    mFileName = aFileName.substr(aFileName.rfind('/'), aFileName.size());
+
+    auto code = file::File::getAllData(aFileName);
+    int num   = 0;
     for (auto& i : {"if", "else", "for", "while"})
     {
         while (true)
@@ -54,6 +55,165 @@ core::Web::processFile(const std::string& aFileName) noexcept
     return w.mWeb;
 }
 
+std::vector<int>
+getPrime()
+{
+    std::vector<int> result;
+
+    std::vector<char> pr(1e7, true);
+    for (long long i = 2; i < long long(pr.size()); ++i)
+    {
+        if (pr[i])
+        {
+            for (long long j = i * i; j < long long(pr.size()); j += i)
+            {
+                pr[j] = false;
+            }
+            result.push_back(i);
+        }
+    }
+
+    std::reverse(result.begin(), result.end());
+
+    return result;
+}
+
+std::unordered_map<std::string, int>
+core::Web::getCodes() noexcept
+{
+    std::unordered_map<std::string, int> result;
+    auto primes = getPrime();
+
+    for (int type = int(Node::Type::Nun); type < int(Node::Type::Last); ++type)
+    {
+        result[std::to_string(type)] = primes.back();
+        primes.pop_back();
+    }
+
+    std::unordered_map<std::string, std::string> relationSwitch =
+        makeRelationMap();
+    for (auto& i : relationSwitch)
+    {
+        // auto it = result.find(relationSwitch[i.first]);
+        // if (it != result.end())
+        // {
+        //     result[i.first] = it->second;
+        // }
+        // else
+        {
+            result[i.first] = primes.back();
+            primes.pop_back();
+        }
+    }
+
+    return result;
+}
+
+void
+core::Web::makeMatrix() const noexcept
+{
+    static std::unordered_map<std::string, int> codes = getCodes();
+
+    std::vector<long long> attributes;
+    std::unordered_map<std::string, int> nums;
+    for (int type = int(Node::Type::Nun); type < int(Node::Type::Last); ++type)
+    {
+        for (auto& i : mWeb)
+        {
+            if (i.second.mType != Node::Type(type)) continue;
+            nums[i.first] = nums.size();
+            attributes.push_back(codes[std::to_string(int(i.second.mType))]);
+        }
+    }
+
+    std::vector<std::vector<int>> table(nums.size(),
+                                        std::vector<int>(nums.size()));
+
+    for (auto& i : mWeb)
+    {
+        for (auto& j : i.second.mLeaves)
+        {
+            for (auto& k : j.second)
+            {
+                auto& x = nums[i.first];
+                auto& y = nums[k];
+                int d   = codes[j.first];
+
+                table[x][y] = d;
+            }
+        }
+    }
+
+    auto rec = recurrentSearch(table, attributes);
+
+    std::string data;
+    for (int i = 0; i < table.size(); ++i)
+    {
+        for (auto& j : table[i])
+        {
+            data += std::to_string(j) + " ";
+        }
+        data += " = " + std::to_string(attributes[i]) + "\n";
+    }
+    data += "\n";
+    for (auto& i : rec)
+    {
+        data += std::to_string(i) + " ";
+    }
+    file::File::writeData("output", mFileName + "_matrix", data);
+}
+
+std::vector<long long>
+core::Web::recurrentSearch(std::vector<std::vector<int>> aTable,
+                           std::vector<long long> attributes) const noexcept
+{
+    std::vector<std::vector<long long>> characteristics;
+    for (auto& i : aTable)
+    {
+        auto& temp = characteristics.emplace_back();
+        for (int j = 0; j < i.size(); ++j)
+        {
+            if (i[j])
+            {
+                temp.emplace_back(i[j] * attributes[j]);
+            }
+        }
+        std::sort(temp.begin(), temp.end());
+    }
+
+    std::vector<long long> result;
+    std::unordered_map<std::string, long long> hash;
+    for (auto& i : characteristics)
+    {
+        std::string s;
+        for (auto& j : i)
+        {
+            s += std::to_string(j) + " ";
+        }
+
+        auto& temp = hash[s];
+        if (temp == 0)
+        {
+            temp = hash.size();
+        }
+        result.emplace_back(temp);
+    }
+
+    std::string data;
+    for (auto& i : characteristics)
+    {
+
+        for (auto& j : i)
+        {
+            data += std::to_string(j) + " ";
+        }
+        data += "\n";
+    }
+    file::File::writeData("output", mFileName + "_char", data);
+
+    return result;
+}
+
 void
 core::Web::print() const noexcept
 {
@@ -77,7 +237,8 @@ core::Web::print() const noexcept
         }
     }
 
-    file::File::writeData("resources", "out", data);
+    file::File::writeData("output", mFileName + "_print", data);
+    file::File::writeData("output", mFileName + "_expr", mExprInfo);
 }
 
 std::unordered_set<std::string>
@@ -105,7 +266,7 @@ core::Web::declarationHandler(const std::string& aCommand,
 {
     std::unordered_set<std::string> result;
 
-    auto parts = file::Parser::slice(aArgs, ",", &core::Web::skipAssaigment);
+    auto parts = file::Parser::slice(aArgs, ",");
 
     mWeb[aCommand].mType = Node::Type::Type;
     for (auto& cur : parts)
@@ -133,7 +294,7 @@ std::unordered_set<std::string>
 core::Web::funcHandler(const std::string& aCommand,
                        const std::string& aArgs) noexcept
 {
-    auto parts = file::Parser::slice(aArgs, "(,", &core::Web::skipAssaigment);
+    auto parts           = file::Parser::slice(aArgs, "(,");
     std::string funcType = aCommand;
     std::string funcName = parts[0];
 
@@ -207,12 +368,13 @@ core::Web::expressionHandler(const std::string& aCommand,
 
     static std::unordered_map<std::string, std::string> methods =
         file::File::getWordsMap(
-            file::Path::getPathUnsafe("resources", "method.txt"));
+            file::Path::getPathUnsafe("language", "method.txt"));
 
     std::string expNumStr = std::to_string(mExpressionNumber);
     while (expNumStr.size() < 3) expNumStr = "0" + expNumStr;
     std::string blockName = "expr_block_" + expNumStr;
-    dom::writeInfo(blockName, "<->", aCommand, aArgs);
+    // dom::writeInfo(blockName, "<->", aCommand, aArgs);
+    mExprInfo += blockName + " <-> " + aCommand + " " + aArgs + "\n";
 
     // TODO: ++ -- as asigment
     bool flag  = false;
@@ -299,7 +461,7 @@ core::Web::makeRelationMap() noexcept
 {
     std::unordered_map<std::string, std::string> result =
         file::File::getWordsMap(
-            file::Path::getPathUnsafe("resources", "relation.txt"));
+            file::Path::getPathUnsafe("language", "relation.txt"));
 
     std::unordered_map<std::string, std::string> temp;
     for (auto& i : result)
@@ -341,10 +503,10 @@ core::Web::typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept
     static std::vector<std::pair<std::unordered_set<std::string>, Node::Type>>
         dict = {
             {file::File::getWordsSet(
-                 file::Path::getPathUnsafe("resources", "concept.txt")),
+                 file::Path::getPathUnsafe("language", "concept.txt")),
              Node::Type::Concept},
             {file::File::getWordsSet(
-                 file::Path::getPathUnsafe("resources", "type.txt")),
+                 file::Path::getPathUnsafe("language", "type.txt")),
              Node::Type::Type   }
     };
 
@@ -355,43 +517,6 @@ core::Web::typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept
         {
             aNode.second.mType = i.second;
             break;
-        }
-    }
-}
-
-void
-core::Web::skipDefault(const char*& c) noexcept
-{
-    skipAssaigment(c);
-    skipCicle(c);
-    while (*c != '\0' && (*c == '\n' || *c == '\t'))
-    {
-        ++c;
-    }
-}
-
-void
-core::Web::skipAssaigment(const char*& c) noexcept
-{
-    if (*c == '=')
-    {
-        while (true)
-        {
-            if (*c == '\0') break;
-            if (*c == ',' || *c == ';') break;
-            ++c;
-        }
-    }
-}
-
-void
-core::Web::skipCicle(const char*& c) noexcept
-{
-    if (*c == '(')
-    {
-        while (*c != '\0' && *c != ')')
-        {
-            ++c;
         }
     }
 }
@@ -416,15 +541,15 @@ core::Web::getRouter() noexcept
             {"expression", &core::Web::expressionHandler}
     };
 
-    auto types = file::File::getLines(
-        file::Path::getPathUnsafe("resources", "type.txt"));
+    auto types =
+        file::File::getLines(file::Path::getPathUnsafe("language", "type.txt"));
     for (auto& i : types)
     {
         result[i] = &core::Web::typeHandler;
     }
 
     auto containers = file::File::getLines(
-        file::Path::getPathUnsafe("resources", "containers.txt"));
+        file::Path::getPathUnsafe("language", "containers.txt"));
     for (auto& i : containers)
     {
         result[i] = &core::Web::containerHandler;

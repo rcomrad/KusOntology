@@ -29,7 +29,7 @@ file::VariableStorage::reloadSettings() noexcept
     {
         if (var.name == "additional_path")
         {
-            file::Path::addFolder(var.value);
+            file::Path::addFoldersFrom(var.value);
             continue;
         }
 

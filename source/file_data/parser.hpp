@@ -23,20 +23,10 @@ public:
     static std::vector<Variable> getVariablesFromFile(
         const std::string aFilename, bool aIsCritical = false) noexcept;
 
-    static std::vector<std::string> slice(const std::string& aStr,
-                                          char aDelimiter) noexcept;
-
     static std::vector<std::string> slice(
         const std::string& aStr,
         const std::string& aDelimiters,
-        const std::string& aErase = "",
-        bool aErraseEmptySlots    = true) noexcept;
-
-    static std::vector<std::string> slice(
-        const std::string& aStr,
-        const std::string& aDelimiters,
-        const std::function<void(const char*& c)>& aSkiper,
-        bool aErraseEmptySlots = true) noexcept;
+        const std::string& aErase = "") noexcept;
 
     enum class Type
     {
@@ -46,9 +36,6 @@ public:
     };
     static void normalize(std::string& aStr, Type aType) noexcept;
     static std::string normalize(const std::string& aStr, Type aType) noexcept;
-
-private:
-    static std::string getStr(const std::string& aStr, int aFrom) noexcept;
 };
 } // namespace file
 

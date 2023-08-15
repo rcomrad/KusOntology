@@ -1,0 +1,231 @@
+cicle
+	child
+		cicle_0
+		cicle_1
+condition
+	child
+		if_0
+		if_1
+		if_2
+		if_3
+function
+	is
+		main
+main
+	child
+		function
+	return
+		int
+	contain
+		cicle_0
+		cicle_1
+		expr_block_005
+		expr_block_011
+		if_0
+		max
+		n
+		num
+int
+	associated
+		main
+	child
+		i
+		n
+long long
+	child
+		max
+vector
+	child
+		num
+i
+	is
+		int
+	assigned
+		expr_block_001
+		expr_block_003
+		expr_block_006
+		expr_block_008
+	participate
+		expr_block_002
+		expr_block_004
+		expr_block_007
+		expr_block_009
+		expr_block_010
+	located
+		cicle_0
+		cicle_1
+max
+	is
+		long long
+	assigned
+		expr_block_005
+		expr_block_010
+	participate
+		expr_block_009
+	put_to
+		expr_block_011
+	located
+		main
+n
+	is
+		int
+	participate
+		expr_block_000
+		expr_block_002
+		expr_block_007
+	located
+		main
+num
+	is
+		vector
+	get_from
+		expr_block_004
+	participate
+		expr_block_005
+		expr_block_009
+		expr_block_010
+	located
+		main
+if_0
+	is
+		condition
+	contain
+		cond_block_0_0
+	located
+		main
+if_1
+	is
+		condition
+	contain
+		cond_block_1_0
+	located
+		cicle_0
+if_2
+	is
+		condition
+	contain
+		cond_block_2_0
+	located
+		cicle_1
+if_3
+	is
+		condition
+	contain
+		cond_block_3_0
+	located
+		cicle_1
+cond_block_0_0
+	located
+		if_0
+	use
+		expr_block_000
+cond_block_1_0
+	located
+		if_1
+	use
+		expr_block_002
+cond_block_2_0
+	located
+		if_2
+	use
+		expr_block_007
+cond_block_3_0
+	located
+		if_3
+	use
+		expr_block_009
+	contain
+		expr_block_010
+cicle_0
+	is
+		cicle
+	contain
+		expr_block_001
+		expr_block_003
+		expr_block_004
+		i
+		if_1
+	located
+		main
+cicle_1
+	is
+		cicle
+	contain
+		expr_block_006
+		expr_block_008
+		i
+		if_2
+		if_3
+	located
+		main
+expr_block_000
+	use
+		n
+	participate
+		cond_block_0_0
+expr_block_001
+	sets
+		i
+	located
+		cicle_0
+expr_block_002
+	use
+		i
+		n
+	participate
+		cond_block_1_0
+expr_block_003
+	sets
+		i
+	located
+		cicle_0
+expr_block_004
+	input
+		num
+	use
+		i
+	located
+		cicle_0
+expr_block_005
+	sets
+		max
+	use
+		num
+	located
+		main
+expr_block_006
+	sets
+		i
+	located
+		cicle_1
+expr_block_007
+	use
+		i
+		n
+	participate
+		cond_block_2_0
+expr_block_008
+	sets
+		i
+	located
+		cicle_1
+expr_block_009
+	use
+		i
+		max
+		num
+	participate
+		cond_block_3_0
+expr_block_010
+	sets
+		max
+	use
+		i
+		num
+	located
+		cond_block_3_0
+expr_block_011
+	output
+		max
+	located
+		main
