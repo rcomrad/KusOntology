@@ -5,23 +5,26 @@ using namespace std;
 int
 main()
 {
+    long long n;
     cin >> n;
-    int n;
-    if (n == 0) return 0;
-    vector<long long> num(n);
 
-    for (int i = 0; i < n; i++)
+    if (n != 0)
     {
-        cin >> num[i];
-    }
+        vector<int> num(n);
 
-    long long max = num[0];
-    for (int i = 0; i < n; i++)
-    {
-        if (num[i] > max) max = num[i];
-    }
+        for (int i = 0; i < n; i++)
+        {
+            cin >> num[i];
+        }
 
-    cout << max;
+        int max = num[0];
+        for (int i = 0; i < n; i++)
+        {
+            if (num[i] > max) max = num[i];
+        }
+
+        cout << max;
+    }
 
     return 0;
 }

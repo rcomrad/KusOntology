@@ -1,20 +1,18 @@
 expr_block_000 <-> expression #include <iostream>
 #include <vector>
 using namespace std
-expr_block_000 <-> expression c1 = 0
-expr_block_001 <-> expression c2 = 4
-expr_block_002 <-> expression cin >> n
-expr_block_003 <-> expression n == 0
-expr_block_004 <-> expression return 0
-expr_block_004 <-> expression i = 0
-expr_block_005 <-> expression i < n
-expr_block_006 <-> expression i++
-expr_block_007 <-> expression cin >> num[i]
-expr_block_008 <-> expression max = num[0]
-expr_block_009 <-> expression i = 0
-expr_block_010 <-> expression i < n
-expr_block_011 <-> expression i++
-expr_block_012 <-> expression num[i] > max
-expr_block_013 <-> expression max = num[i]
-expr_block_014 <-> expression cout << max
-expr_block_015 <-> expression return 0
+expr_block_000 <-> expression cin >> n
+expr_block_001 <-> expression n == 0
+expr_block_002 <-> expression return 0
+expr_block_002 <-> expression i = 0
+expr_block_003 <-> expression i < n
+expr_block_004 <-> expression i++
+expr_block_005 <-> expression cin >> num[i]
+expr_block_006 <-> expression max = num[0]
+expr_block_007 <-> expression i = 0
+expr_block_008 <-> expression i < n
+expr_block_009 <-> expression i++
+expr_block_010 <-> expression num[i] > max
+expr_block_011 <-> expression max = num[i]
+expr_block_012 <-> expression cout << max
+expr_block_013 <-> expression return 0

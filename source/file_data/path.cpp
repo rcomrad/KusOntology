@@ -152,6 +152,42 @@ file::Path::openFolder(const std::string& aName) noexcept
     return result;
 }
 
+bool
+file::Path::clearFolder(const std::string& aName) noexcept
+{
+    bool result = false;
+
+    std::string temp;
+    auto p = getPath(aName);
+    if (!p.has_value())
+    {
+        auto p2 = openFolder(aName);
+        if (p2.has_value())
+        {
+            temp = p2.value();
+        }
+    }
+    else
+    {
+        temp = p.value();
+    }
+
+    if (!temp.empty())
+    {
+        std::filesystem::remove_all(temp);
+        std::filesystem::create_directories(temp);
+        
+        result = true;
+        dom::writeInfo("Remove folder (", aName, ")");
+    }
+    else
+    {
+        dom::writeWarning("Can't remove folder (", aName, ")");
+    }
+
+    return result;
+}
+
 void
 file::Path::addFoldersFrom(const std::string& aPath) noexcept
 {

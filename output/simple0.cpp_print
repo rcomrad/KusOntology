@@ -1,7 +1,7 @@
-function
+1) function
 	is
 		main
-main
+2) main
 	child
 		function
 	return
@@ -11,12 +11,12 @@ main
 		expr_block_001
 		expr_block_002
 		min
-int
+3) int
 	associated
 		main
 	child
 		min
-min
+4) min
 	assigned
 		expr_block_002
 	is
@@ -29,17 +29,17 @@ min
 		expr_block_002
 	located
 		main
-expr_block_000
+5) expr_block_000
 	output
 		min
 	located
 		main
-expr_block_001
+6) expr_block_001
 	input
 		min
 	located
 		main
-expr_block_002
+7) expr_block_002
 	sets
 		min
 	use

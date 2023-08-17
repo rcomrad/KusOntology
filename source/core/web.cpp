@@ -219,13 +219,14 @@ core::Web::print() const noexcept
 {
     std::string data;
 
+    int cnt = 0;
     for (int type = int(Node::Type::Nun); type < int(Node::Type::Last); ++type)
     {
         for (auto& i : mWeb)
         {
             if (i.second.mType != Node::Type(type)) continue;
 
-            data += i.first + "\n";
+            data += std::to_string(++cnt) + ") " + i.first + "\n";
             for (auto& j : i.second.mLeaves)
             {
                 data += "\t" + j.first + "\n";

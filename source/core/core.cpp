@@ -17,6 +17,8 @@ core::Core::Core() noexcept
 void
 core::Core::run() noexcept
 {
+    file::Path::clearFolder("output");
+
     auto names = file::Path::getContent(file::Path::getPathUnsafe("data", ""));
     for (auto& i : names)
     {

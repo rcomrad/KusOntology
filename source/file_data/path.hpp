@@ -29,6 +29,8 @@ public:
 
     static std::optional<std::string> openFolder(
         const std::string& aName) noexcept;
+    static bool clearFolder(const std::string& aName) noexcept;
+
     static void addFoldersFrom(const std::string& aPath) noexcept;
 
     enum class FileType
