@@ -110,7 +110,7 @@ core::Web::getCodes() noexcept
 }
 
 void
-core::Web::makeMatrix() const noexcept
+core::Web::makeMatrix() noexcept
 {
     static std::unordered_map<std::string, int> codes = getCodes();
 
@@ -165,7 +165,7 @@ core::Web::makeMatrix() const noexcept
 
 std::vector<long long>
 core::Web::recurrentSearch(std::vector<std::vector<int>> aTable,
-                           std::vector<long long> attributes) const noexcept
+                           std::vector<long long> attributes) noexcept
 {
     std::vector<std::vector<long long>> characteristics;
     for (auto& i : aTable)
@@ -202,7 +202,6 @@ core::Web::recurrentSearch(std::vector<std::vector<int>> aTable,
     std::string data;
     for (auto& i : characteristics)
     {
-
         for (auto& j : i)
         {
             data += std::to_string(j) + " ";
@@ -211,7 +210,92 @@ core::Web::recurrentSearch(std::vector<std::vector<int>> aTable,
     }
     file::File::writeData("output", mFileName + "_char", data);
 
+    std::reverse(characteristics.begin(), characteristics.end());
+    for (int type = int(Node::Type::Nun); type < int(Node::Type::Last); ++type)
+    {
+        for (auto& i : mWeb)
+        {
+            if (i.second.mType != Node::Type(type)) continue;
+
+            mMarix[int(i.second.mType)].emplace_back(
+                std::move(characteristics.back()));
+            characteristics.pop_back();
+        }
+    }
+
     return result;
+}
+
+std::vector<float>
+foo(const std::vector<long long>& a,
+    const std::vector<std::vector<long long>>& other) noexcept
+{
+    std::vector<float> result;
+
+    std::unordered_map<long long, int> nums;
+    for (auto& i : a) ++nums[i];
+
+    for (auto& i : other)
+    {
+        result.emplace_back(0);
+        std::unordered_map<long long, int> temp = nums;
+
+        std::vector<int> leftovers;
+        for (auto& j : i)
+        {
+            if (temp[j] > 0)
+            {
+                ++result.back();
+                --temp[j];
+            }
+            else
+            {
+                leftovers.emplace_back(j);
+            }
+        }
+
+        for (auto& j : temp)
+        {
+            for (int k = 0; k < j.second; ++k)
+            {
+            }
+        }
+
+        result.back() /= (a.size() + i.size()) / 2.;
+    }
+
+    return result;
+}
+
+float
+core::Web::compare(const Web& other) const noexcept
+{
+    std::unordered_map<int, std::vector<std::vector<long long>>> firstM =
+        mMarix;
+    std::unordered_map<int, std::vector<std::vector<long long>>> secondM =
+        other.mMarix;
+
+    float result = 0;
+    float cnt    = 0;
+
+    for (int type = int(Node::Type::Nun); type < int(Node::Type::Last); ++type)
+    {
+        while (!firstM[type].empty() && !secondM[type].empty())
+        {
+            auto val = foo(firstM[type].back(), secondM[type]);
+            auto it  = std::max_element(val.begin(), val.end());
+
+            result += *it;
+            firstM[type].pop_back();
+            secondM[type].erase(secondM[type].begin() + (it - val.begin()));
+            ++cnt;
+        }
+
+        cnt += firstM[type].size();
+        cnt += secondM[type].size();
+    }
+
+    return result / cnt;
 }
 
 void
@@ -494,31 +578,20 @@ core::Web::createEdge(const std::string& aFrom,
 
     if (from.second.mType == Node::Type::Nun) from.second.mType = aFromType;
 
-    if (from.second.mType == Node::Type::Nun) typeAutomaticDetection(from);
-    if (to.second.mType == Node::Type::Nun) typeAutomaticDetection(to);
+    typeAutomaticDetection(from);
+    typeAutomaticDetection(to);
 }
 
 void
 core::Web::typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept
 {
-    static std::vector<std::pair<std::unordered_set<std::string>, Node::Type>>
-        dict = {
-            {file::File::getWordsSet(
-                 file::Path::getPathUnsafe("language", "concept.txt")),
-             Node::Type::Concept},
-            {file::File::getWordsSet(
-                 file::Path::getPathUnsafe("language", "type.txt")),
-             Node::Type::Type   }
-    };
+    if (aNode.second.mType == Node::Type::Nun) return;
 
-    for (auto& i : dict)
+    static auto dict = getNodeList();
+    auto it          = dict.find(aNode.first);
+    if (it != dict.end())
     {
-        auto it = i.first.find(aNode.first);
-        if (it != i.first.end())
-        {
-            aNode.second.mType = i.second;
-            break;
-        }
+        aNode.second.mType = it->second;
     }
 }
 
@@ -529,31 +602,67 @@ core::Web::process(const std::string& aStr) noexcept
     return process(ptr);
 }
 
+void
+addNamesToList(std::unordered_map<std::string, core::Node::Type>& aArray,
+               core::Node::Type aType,
+               std::vector<std::string>&& aNames) noexcept
+{
+    for (auto&& i : aNames)
+    {
+        aArray.insert({std::move(i), aType});
+    }
+}
+
+void
+loadNamesFromFile(std::unordered_map<std::string, core::Node::Type>& aArray,
+                  core::Node::Type aType,
+                  const std::string& aFileName) noexcept
+{
+    auto names =
+        file::File::getLines(file::Path::getPathUnsafe("language", aFileName));
+    addNamesToList(aArray, aType, std::move(names));
+}
+
+std::unordered_map<std::string, core::Node::Type>
+core::Web::getNodeList() noexcept
+{
+    std::unordered_map<std::string, Node::Type> result;
+
+    loadNamesFromFile(result, Node::Type::Concept, "concept.txt");
+    loadNamesFromFile(result, Node::Type::Type, "containers.txt");
+    loadNamesFromFile(result, Node::Type::Type, "type.txt");
+    loadNamesFromFile(result, Node::Type::Cicle, {"for", "while"});
+    loadNamesFromFile(result, Node::Type::Condition, {"if", "else if", "else"});
+    loadNamesFromFile(result, Node::Type::Expression, {"expression"});
+
+    return result;
+}
+
 std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
 core::Web::getRouter() noexcept
 {
-    std::unordered_map<std::string, decltype(&core::Web::typeHandler)> result =
-        {
-            {"for",        &core::Web::cicleHandler     },
-            {"while",      &core::Web::cicleHandler     },
-            {"if",         &core::Web::conditionHandler },
-            {"else if",    &core::Web::conditionHandler },
-            {"else",       &core::Web::conditionHandler },
-            {"expression", &core::Web::expressionHandler}
+    std::unordered_map<std::string, decltype(&core::Web::typeHandler)> result;
+
+    auto temp = getNodeList();
+    std::unordered_map<Node::Type, decltype(&core::Web::typeHandler)> router = {
+  //{Node::Type::Concept,        &core::Web::cicleHandler     },
+        {Node::Type::Function,   &core::Web::typeHandler      },
+        {Node::Type::Type,       &core::Web::typeHandler      },
+ //{Node::Type::Variable,       &core::Web::cicleHandler     },
+        {Node::Type::Condition,  &core::Web::conditionHandler },
+ //{Node::Type::ConditionBlock, &core::Web::cicleHandler     },
+        {Node::Type::Cicle,      &core::Web::cicleHandler     },
+        {Node::Type::Expression, &core::Web::expressionHandler},
+ // {Node::Type::FunctionCall,   &core::Web::expressionHandler}
     };
 
-    auto types =
-        file::File::getLines(file::Path::getPathUnsafe("language", "type.txt"));
-    for (auto& i : types)
+    for (auto& i : temp)
     {
-        result[i] = &core::Web::typeHandler;
-    }
-
-    auto containers = file::File::getLines(
-        file::Path::getPathUnsafe("language", "containers.txt"));
-    for (auto& i : containers)
-    {
-        result[i] = &core::Web::containerHandler;
+        auto it = router.find(i.second);
+        if (it != router.end())
+        {
+            result[i.first] = it->second;
+        }
     }
 
     return result;

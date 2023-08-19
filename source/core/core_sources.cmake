@@ -9,6 +9,9 @@ set(
     node.cpp
     node.hpp
 
+    vertix.cpp
+    vertix.hpp
+
     web.cpp
     web.hpp
 )

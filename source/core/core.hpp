@@ -2,8 +2,11 @@
 #define CORE_HPP
 
 #include <string>
+#include <unordered_map>
 
 #include "domain/holy_trinity.hpp"
+
+#include "web.hpp"
 
 namespace core
 {
@@ -15,6 +18,8 @@ public:
 
     void run() noexcept;
     void process(const std::string& aName) noexcept;
+
+    std::unordered_map<int, Web> webs;
 };
 } // namespace core
 

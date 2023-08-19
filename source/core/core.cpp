@@ -8,8 +8,6 @@
 #include "file_data/path.hpp"
 #include "file_data/variable_storage.hpp"
 
-#include "web.hpp"
-
 core::Core::Core() noexcept
 {
 }
@@ -24,12 +22,19 @@ core::Core::run() noexcept
     {
         process(i);
     }
+
+    dom::writeInfo(webs[2].compare(webs[2]));
+    dom::writeInfo(webs[2].compare(webs[3]));
+    dom::writeInfo(webs[2].compare(webs[4]));
+    dom::writeInfo(webs[2].compare(webs[5]));
 }
 
 void
 core::Core::process(const std::string& aName) noexcept
 {
-    Web w(aName);
-    w.print();
-    w.makeMatrix();
+    static int num = 0;
+    webs[num]      = Web(aName);
+    webs[num].print();
+    webs[num].makeMatrix();
+    ++num;
 }

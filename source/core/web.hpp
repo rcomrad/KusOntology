@@ -14,15 +14,18 @@ namespace core
 class Web
 {
 public:
+    Web() noexcept {};
     Web(const std::string& aFileName) noexcept;
-    HOLY_TRINITY_SINGLE(Web);
+    HOLY_TRINITY_NOCOPY(Web);
 
     static std::map<std::string, Node> processFile(
         const std::string& aFileName) noexcept;
 
     void print() const noexcept;
 
-    void makeMatrix() const noexcept;
+    void makeMatrix() noexcept;
+
+    float compare(const Web& other) const noexcept;
 
 private:
     std::string mFileName;
@@ -51,11 +54,13 @@ private:
     static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
     getRouter() noexcept;
 
+    static std::unordered_map<std::string, Node::Type> getNodeList() noexcept;
+
     static std::unordered_map<std::string, int> getCodes() noexcept;
 
     std::vector<long long> recurrentSearch(
         std::vector<std::vector<int>> aTable,
-        std::vector<long long> attributes) const noexcept;
+        std::vector<long long> attributes) noexcept;
 
     static std::string getName(decltype(mVariables.begin()) aPtr) noexcept;
     static std::string getName(
@@ -98,6 +103,8 @@ private:
     int mExpressionNumber;
 
     std::string mExprInfo;
+
+    std::unordered_map<int, std::vector<std::vector<long long>>> mMarix;
 };
 } // namespace core
 
