@@ -15,11 +15,8 @@ class Web
 {
 public:
     Web() noexcept {};
-    Web(const std::string& aFileName) noexcept;
+    Web(const std::string& aName) noexcept;
     HOLY_TRINITY_NOCOPY(Web);
-
-    static std::map<std::string, Node> processFile(
-        const std::string& aFileName) noexcept;
 
     void print() const noexcept;
 
@@ -27,30 +24,17 @@ public:
 
     float compare(const Web& other) const noexcept;
 
+    void addNode(const std::string& aName, Node::Type aType) noexcept;
+    void createEdge(const std::string& aFrom,
+                    const std::string& aTo,
+                    const std::string& aFromRelation,
+                    Node::Type aFromType = Node::Type::Nun) noexcept;
+
 private:
-    std::string mFileName;
+    std::string mName;
 
     std::map<std::string, Node> mWeb;
 
-    std::unordered_set<std::string> mVariables;
-
-    std::unordered_set<std::string> typeHandler(
-        const std::string& aCommand, const std::string& aArgs) noexcept;
-    std::unordered_set<std::string> declarationHandler(
-        const std::string& aCommand, const std::string& aArgs) noexcept;
-    std::unordered_set<std::string> funcHandler(
-        const std::string& aCommand, const std::string& aArgs) noexcept;
-    std::unordered_set<std::string> cicleHandler(
-        const std::string& aCommand, const std::string& aArgs) noexcept;
-    std::unordered_set<std::string> conditionHandler(
-        const std::string& aCommand, const std::string& aArgs) noexcept;
-    std::unordered_set<std::string> expressionHandler(
-        const std::string& aCommand, const std::string& aArgs) noexcept;
-    std::unordered_set<std::string> containerHandler(
-        const std::string& aCommand, const std::string& aArgs) noexcept;
-
-    std::unordered_set<std::string> process(const std::string& aStr) noexcept;
-    std::unordered_set<std::string> process(const char*& aStr) noexcept;
     static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
     getRouter() noexcept;
 
@@ -85,11 +69,6 @@ private:
 
     static std::unordered_map<std::string, std::string>
     makeRelationMap() noexcept;
-
-    void createEdge(const std::string& aFrom,
-                    const std::string& aTo,
-                    const std::string& aFromRelation,
-                    Node::Type aFromType = Node::Type::Nun) noexcept;
 
     void typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept;
 

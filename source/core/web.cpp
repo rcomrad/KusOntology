@@ -10,49 +10,44 @@
 #include "file_data/path.hpp"
 #include "file_data/variable_storage.hpp"
 
-core::Web::Web(const std::string& aFileName) noexcept
-    : mCicleNumber(0), mIfNumber(-1), mBlockNumber(0), mExpressionNumber(0)
+core::Web::Web() noexcept : Web("NUN")
 {
-    mFileName = aFileName.substr(aFileName.rfind('/'), aFileName.size());
-
-    auto code = file::File::getAllData(aFileName);
-    int num   = 0;
-    for (auto& i : {"if", "else", "for", "while"})
-    {
-        while (true)
-        {
-            num = code.find(i, num);
-            if (num != std::string::npos)
-            {
-                int cnt = 0;
-                while (!(code[num] == ')' && cnt == 1))
-                {
-                    if (code[num] == '(') ++cnt;
-                    if (code[num] == ')') --cnt;
-                    ++num;
-                }
-                ++num;
-                while (std::isspace(code[num])) ++num;
-                if (code[num] != '{')
-                {
-                    code[num - 1]                 = '{';
-                    code[code.find(';', num) + 1] = '}';
-                }
-            }
-            else
-            {
-                break;
-            }
-        }
-    }
-    process(code);
 }
 
-std::map<std::string, core::Node>
-core::Web::processFile(const std::string& aFileName) noexcept
+core::Web::Web(const std::string& aName) noexcept : mName(aName)
 {
-    Web w(aFileName);
-    return w.mWeb;
+}
+
+void
+core::Web::addNode(const std::string& aName, Node::Type aType) noexcept
+{
+    mWeb[aName].mType = aType;
+}
+
+void
+core::Web::createEdge(const std::string& aFrom,
+                      const std::string& aTo,
+                      const std::string& aFromRelation,
+                      Node::Type aFromType) noexcept
+{
+    static std::unordered_map<std::string, std::string> relationSwitch =
+        makeRelationMap();
+
+    if (aFromType == Node::Type::Variable) mVariables.insert(aFrom);
+
+    mWeb[aFrom];
+    mWeb[aTo];
+
+    auto& from = *mWeb.find(aFrom);
+    auto& to   = *mWeb.find(aTo);
+
+    from.second.mLeaves[aFromRelation].insert(aTo);
+    to.second.mLeaves[relationSwitch[aFromRelation]].insert(aFrom);
+
+    if (from.second.mType == Node::Type::Nun) from.second.mType = aFromType;
+
+    typeAutomaticDetection(from);
+    typeAutomaticDetection(to);
 }
 
 std::vector<int>
@@ -556,30 +551,6 @@ core::Web::makeRelationMap() noexcept
     result.insert(temp.begin(), temp.end());
 
     return result;
-}
-
-void
-core::Web::createEdge(const std::string& aFrom,
-                      const std::string& aTo,
-                      const std::string& aFromRelation,
-                      Node::Type aFromType) noexcept
-{
-    static std::unordered_map<std::string, std::string> relationSwitch =
-        makeRelationMap();
-
-    mWeb[aFrom];
-    mWeb[aTo];
-
-    auto& from = *mWeb.find(aFrom);
-    auto& to   = *mWeb.find(aTo);
-
-    from.second.mLeaves[aFromRelation].insert(aTo);
-    to.second.mLeaves[relationSwitch[aFromRelation]].insert(aFrom);
-
-    if (from.second.mType == Node::Type::Nun) from.second.mType = aFromType;
-
-    typeAutomaticDetection(from);
-    typeAutomaticDetection(to);
 }
 
 void

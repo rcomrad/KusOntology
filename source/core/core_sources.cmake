@@ -4,6 +4,12 @@ set(
     core.cpp
     core.hpp 
 
+    decoder.cpp
+    decoder.hpp
+
+    language.cpp
+    language.hpp
+
     main.cpp
 
     node.cpp
