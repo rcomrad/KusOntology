@@ -16,8 +16,7 @@ public:
     // Web(const std::string& aFileName) noexcept;
     // HOLY_TRINITY_NOCOPY(Web);
 
-    static std::map<std::string, Node> processFile(
-        const std::string& aFileName) noexcept;
+    static Web processFile(const std::string& aFileName) noexcept;
 
 private:
     Web mWeb;
@@ -25,9 +24,10 @@ private:
     std::unordered_set<std::string> mVariables;
 
     int mCicleNumber;
-    int mIfNumber;
-    int mBlockNumber;
+    int mConditionBlockNumber;
     int mExpressionNumber;
+
+    Decoder(const std::string& aFileName) noexcept;
 
     static void preprocess(std::string& aData) noexcept;
     std::unordered_set<std::string> process(const std::string& aStr) noexcept;
@@ -72,7 +72,7 @@ private:
         auto it     = aCont.find(aName);
         if (it != aCont.end())
         {
-            createEdge(aBlockName, getName(it), aType);
+            mWeb.createEdge(aBlockName, getName(it), aType);
             result = true;
         }
         return result;

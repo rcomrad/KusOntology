@@ -14,6 +14,9 @@ class Language
 {
 public:
     static std::unordered_map<std::string, Node::Type> getNodeList() noexcept;
+    static std::unordered_map<std::string, std::string>
+    makeRelationMap() noexcept;
+    static std::unordered_map<std::string, long long> getNameToNum() noexcept;
 
 private:
     static void loadNamesFromFile(
@@ -21,10 +24,12 @@ private:
         core::Node::Type aType,
         const std::string& aFileName) noexcept;
 
-    static std::unordered_map<std::string, core::Node::Type> addNamesToList(
+    static void addNamesToList(
         std::unordered_map<std::string, core::Node::Type>& aArray,
         core::Node::Type aType,
         std::vector<std::string>&& aNames) noexcept;
+
+    static std::vector<long long> getPrime() noexcept;
 };
 } // namespace core
 

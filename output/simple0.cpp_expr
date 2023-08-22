@@ -1,7 +1,0 @@
-expr_block_000 <-> expression #include <iostream>
-#include <vector>
-using namespace std
-expr_block_000 <-> expression cout << min
-expr_block_001 <-> expression cin >> min
-expr_block_002 <-> expression return 0
-expr_block_002 <-> expression min = min * 2

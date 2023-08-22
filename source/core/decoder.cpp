@@ -2,11 +2,26 @@
 
 #include "file_data/file.hpp"
 #include "file_data/parser.hpp"
+#include "file_data/path.hpp"
+
+#include "language.hpp"
+
+core::Web
+core::Decoder::processFile(const std::string& aFileName) noexcept
+{
+    Decoder d(aFileName);
+    Web result = std::move(d.mWeb);
+    return result;
+}
 
 core::Decoder::Decoder(const std::string& aFileName) noexcept
-    : mCicleNumber(0), mIfNumber(-1), mBlockNumber(0), mExpressionNumber(0)
+    : mCicleNumber(0),
+      mConditionBlockNumber(0),
+      mExpressionNumber(0),
+      mWeb(aFileName.substr(aFileName.rfind('/') + 1, aFileName.size()))
 {
-    mFileName = aFileName.substr(aFileName.rfind('/'), aFileName.size());
+    auto mFileName =
+        aFileName.substr(aFileName.rfind('/') + 1, aFileName.size());
     auto code = file::File::getAllData(aFileName);
     preprocess(code);
     process(code);
@@ -22,6 +37,7 @@ core::Decoder::preprocess(std::string& aData) noexcept
 
     for (auto& i : names)
     {
+        int num = 0;
         while (true)
         {
             num = aData.find(i, num);
@@ -55,7 +71,8 @@ core::Decoder::process(const char*& aStr) noexcept
 {
     std::unordered_set<std::string> result;
 
-    static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
+    static std::unordered_map<std::string,
+                              decltype(&core::Decoder::typeHandler)>
         router = getRouter();
 
     while (*aStr != '\0' && *aStr != '}')
@@ -102,7 +119,7 @@ core::Decoder::process(const char*& aStr) noexcept
 
                 for (auto& name : temp)
                 {
-                    createEdge(curStr, name, "contain");
+                    mWeb.createEdge(curStr, name, "contain");
                 }
             }
 
@@ -112,18 +129,18 @@ core::Decoder::process(const char*& aStr) noexcept
 
     if (*aStr == '}') ++aStr;
 
-    auto temp = std::move(result);
-    for (auto& i : temp)
-    {
-        if (i.find("cond_block") == std::string::npos)
-        {
-            result.insert(i);
-        }
-        else
-        {
-            result.insert(*mWeb[i].mLeaves.find("located")->second.begin());
-        }
-    }
+    // auto temp = std::move(result);
+    // for (auto& i : temp)
+    // {
+    //     if (i.find("cond_block") == std::string::npos)
+    //     {
+    //         result.insert(i);
+    //     }
+    //     else
+    //     {
+    //         result.insert(*mWeb[i].mLeaves.find("located")->second.begin());
+    //     }
+    // }
 
     return result;
 }
@@ -138,16 +155,17 @@ core::Decoder::process(const std::string& aStr) noexcept
 //--------------------------------------------------------------------------------
 
 std::unordered_map<std::string, decltype(&core::Decoder::typeHandler)>
-core::Web::getRouter() noexcept
+core::Decoder::getRouter() noexcept
 {
     std::unordered_map<std::string, decltype(&core::Decoder::typeHandler)>
         result;
 
-    auto temp = getNodeList();
+    auto temp = Language::getNodeList();
     std::unordered_map<Node::Type, decltype(&core::Decoder::typeHandler)>
         router = {
             {Node::Type::Function,   &core::Decoder::typeHandler      },
             {Node::Type::Type,       &core::Decoder::typeHandler      },
+            {Node::Type::Container,  &core::Decoder::containerHandler },
             {Node::Type::Condition,  &core::Decoder::conditionHandler },
             {Node::Type::Cicle,      &core::Decoder::cicleHandler     },
             {Node::Type::Expression, &core::Decoder::expressionHandler},
@@ -259,22 +277,16 @@ std::unordered_set<std::string>
 core::Decoder::conditionHandler(const std::string& aCommand,
                                 const std::string& aArgs) noexcept
 {
-    if (aCommand == "if")
-    {
-        mBlockNumber = 0;
-        ++mIfNumber;
-    }
-    else
-    {
-        ++mBlockNumber;
-    }
+    std::string blockName =
+        "cond_block_" + std::to_string(mConditionBlockNumber);
 
-    std::string ifName    = "if_" + std::to_string(mIfNumber);
-    std::string blockName = "cond_block_" + std::to_string(mIfNumber) + "_" +
-                            std::to_string(mBlockNumber);
-
-    mWeb.createEdge(ifName, "condition", "is", Node::Type::Condition);
-    mWeb.createEdge(blockName, ifName, "located", Node::Type::ConditionBlock);
+    mWeb.createEdge(blockName, "condition", "is", Node::Type::Condition);
+    if (aCommand != "if")
+    {
+        std::string prev =
+            "cond_block_" + std::to_string(mConditionBlockNumber - 1);
+        mWeb.createEdge(blockName, prev, "next", Node::Type::Condition);
+    }
 
     std::string data = getInsides(aArgs);
     auto var         = process(getInsides(aArgs));
@@ -282,6 +294,8 @@ core::Decoder::conditionHandler(const std::string& aCommand,
     {
         mWeb.createEdge(blockName, i, "use");
     }
+
+    ++mConditionBlockNumber;
 
     return {blockName};
 }
@@ -356,8 +370,9 @@ core::Decoder::getName(
 {
     return *aPtr;
 }
+
 std::string
-core::Web::getName(
+core::Decoder::getName(
     std::unordered_map<std::string, std::string>::const_iterator aPtr) noexcept
 {
     return aPtr->second;
@@ -366,7 +381,7 @@ core::Web::getName(
 //--------------------------------------------------------------------------------
 
 bool
-core::Web::check(const char*& aStr) noexcept
+core::Decoder::check(const char*& aStr) noexcept
 {
     static int n = 0;
     if (*aStr == '(') ++n;

@@ -8,6 +8,8 @@
 #include "file_data/path.hpp"
 #include "file_data/variable_storage.hpp"
 
+#include "decoder.hpp"
+
 core::Core::Core() noexcept
 {
 }
@@ -16,25 +18,40 @@ void
 core::Core::run() noexcept
 {
     file::Path::clearFolder("output");
-
-    auto names = file::Path::getContent(file::Path::getPathUnsafe("data", ""));
-    for (auto& i : names)
-    {
-        process(i);
-    }
-
-    dom::writeInfo(webs[2].compare(webs[2]));
-    dom::writeInfo(webs[2].compare(webs[3]));
-    dom::writeInfo(webs[2].compare(webs[4]));
-    dom::writeInfo(webs[2].compare(webs[5]));
+    fill();
+    print();
+    check();
 }
 
 void
-core::Core::process(const std::string& aName) noexcept
+core::Core::fill() noexcept
 {
-    static int num = 0;
-    webs[num]      = Web(aName);
-    webs[num].print();
-    webs[num].makeMatrix();
-    ++num;
+    auto names = file::Path::getContent(file::Path::getPathUnsafe("data", ""));
+    for (auto& i : names)
+    {
+        auto temp   = Decoder::processFile(i);
+        auto name   = temp.getName();
+        mWebs[name] = std::move(temp);
+    }
+}
+
+void
+core::Core::print() noexcept
+{
+    for (auto& i : mWebs)
+    {
+        i.second.print();
+        i.second.makeMatrix();
+    }
+}
+
+void
+core::Core::check() noexcept
+{
+    auto baseName = file::VariableStorage::getInstance().getWordUnsafe("base");
+    auto& base    = mWebs[baseName];
+    for (auto& i : mWebs)
+    {
+        dom::writeInfo(baseName, "<->", i.first, "=", base.compare(i.second));
+    }
 }

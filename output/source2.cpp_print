@@ -3,8 +3,8 @@
 		cicle_0
 2) condition
 	child
-		if_0
-		if_1
+		cond_block_0
+		cond_block_1
 3) function
 	is
 		main
@@ -69,90 +69,80 @@
 		expr_block_007
 	located
 		cicle_0
-10) if_0
+10) cond_block_0
 	is
 		condition
-	contain
-		cond_block_0_0
-	located
-		cicle_0
-11) if_1
-	is
-		condition
-	contain
-		cond_block_1_0
-	located
-		cicle_0
-12) cond_block_0_0
-	located
-		if_0
 	use
 		expr_block_003
-13) cond_block_1_0
 	located
-		if_1
+		cicle_0
+11) cond_block_1
+	is
+		condition
 	use
 		expr_block_006
 	contain
 		expr_block_007
-14) cicle_0
+	located
+		cicle_0
+12) cicle_0
 	is
 		cicle
 	contain
+		cond_block_0
+		cond_block_1
 		expr_block_002
 		expr_block_004
 		expr_block_005
 		i
-		if_0
-		if_1
 		num
 	located
 		main
-15) expr_block_000
+13) expr_block_000
 	sets
 		mx
 	located
 		main
-16) expr_block_001
+14) expr_block_001
 	input
 		n
 	located
 		main
-17) expr_block_002
+15) expr_block_002
 	sets
 		i
 	located
 		cicle_0
-18) expr_block_003
+16) expr_block_003
 	use
 		i
 		n
 	participate
-		cond_block_0_0
-19) expr_block_004
+		cond_block_0
+17) expr_block_004
 	sets
 		i
 	located
 		cicle_0
-20) expr_block_005
+18) expr_block_005
 	input
 		num
 	located
 		cicle_0
-21) expr_block_006
+19) expr_block_006
 	use
 		mx
 		num
 	participate
-		cond_block_1_0
-22) expr_block_007
+		cond_block_1
+20) expr_block_007
 	sets
 		mx
 	use
 		num
 	located
-		cond_block_1_0
-23) expr_block_008
+		cond_block_1
+21) expr_block_008
 	output
 		mx
 	located

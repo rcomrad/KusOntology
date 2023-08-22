@@ -17,9 +17,12 @@ public:
     HOLY_TRINITY_SINGLE(Core);
 
     void run() noexcept;
+    void fill() noexcept;
+    void print() noexcept;
+    void check() noexcept;
     void process(const std::string& aName) noexcept;
 
-    std::unordered_map<int, Web> webs;
+    std::unordered_map<std::string, Web> mWebs;
 };
 } // namespace core
 

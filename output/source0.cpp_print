@@ -4,10 +4,10 @@
 		cicle_1
 2) condition
 	child
-		if_0
-		if_1
-		if_2
-		if_3
+		cond_block_0
+		cond_block_1
+		cond_block_2
+		cond_block_3
 3) function
 	is
 		main
@@ -19,10 +19,10 @@
 	contain
 		cicle_0
 		cicle_1
+		cond_block_0
 		expr_block_000
 		expr_block_006
 		expr_block_012
-		if_0
 		max
 		n
 		num
@@ -89,150 +89,130 @@
 		expr_block_011
 	located
 		main
-12) if_0
+12) cond_block_0
 	is
 		condition
-	contain
-		cond_block_0_0
-	located
-		main
-13) if_1
-	is
-		condition
-	contain
-		cond_block_1_0
-	located
-		cicle_0
-14) if_2
-	is
-		condition
-	contain
-		cond_block_2_0
-	located
-		cicle_1
-15) if_3
-	is
-		condition
-	contain
-		cond_block_3_0
-	located
-		cicle_1
-16) cond_block_0_0
-	located
-		if_0
 	use
 		expr_block_001
-17) cond_block_1_0
 	located
-		if_1
+		main
+13) cond_block_1
+	is
+		condition
 	use
 		expr_block_003
-18) cond_block_2_0
 	located
-		if_2
+		cicle_0
+14) cond_block_2
+	is
+		condition
 	use
 		expr_block_008
-19) cond_block_3_0
 	located
-		if_3
+		cicle_1
+15) cond_block_3
+	is
+		condition
 	use
 		expr_block_010
 	contain
 		expr_block_011
-20) cicle_0
+	located
+		cicle_1
+16) cicle_0
 	is
 		cicle
 	contain
+		cond_block_1
 		expr_block_002
 		expr_block_004
 		expr_block_005
 		i
-		if_1
 	located
 		main
-21) cicle_1
+17) cicle_1
 	is
 		cicle
 	contain
+		cond_block_2
+		cond_block_3
 		expr_block_007
 		expr_block_009
 		i
-		if_2
-		if_3
 	located
 		main
-22) expr_block_000
+18) expr_block_000
 	input
 		n
 	located
 		main
-23) expr_block_001
+19) expr_block_001
 	use
 		n
 	participate
-		cond_block_0_0
-24) expr_block_002
+		cond_block_0
+20) expr_block_002
 	sets
 		i
 	located
 		cicle_0
-25) expr_block_003
+21) expr_block_003
 	use
 		i
 		n
 	participate
-		cond_block_1_0
-26) expr_block_004
+		cond_block_1
+22) expr_block_004
 	sets
 		i
 	located
 		cicle_0
-27) expr_block_005
+23) expr_block_005
 	input
 		num
 	use
 		i
 	located
 		cicle_0
-28) expr_block_006
+24) expr_block_006
 	sets
 		max
 	use
 		num
 	located
 		main
-29) expr_block_007
+25) expr_block_007
 	sets
 		i
 	located
 		cicle_1
-30) expr_block_008
+26) expr_block_008
 	use
 		i
 		n
 	participate
-		cond_block_2_0
-31) expr_block_009
+		cond_block_2
+27) expr_block_009
 	sets
 		i
 	located
 		cicle_1
-32) expr_block_010
+28) expr_block_010
 	use
 		i
 		max
 		num
 	participate
-		cond_block_3_0
-33) expr_block_011
+		cond_block_3
+29) expr_block_011
 	sets
 		max
 	use
 		i
 		num
 	located
-		cond_block_3_0
-34) expr_block_012
+		cond_block_3
+30) expr_block_012
 	output
 		max
 	located

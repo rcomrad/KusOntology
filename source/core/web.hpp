@@ -7,6 +7,7 @@
 #include "domain/holy_trinity.hpp"
 #include "domain/metaprogramming.hpp"
 
+#include "matrix.hpp"
 #include "node.hpp"
 
 namespace core
@@ -14,9 +15,11 @@ namespace core
 class Web
 {
 public:
-    Web() noexcept {};
+    Web() noexcept;
     Web(const std::string& aName) noexcept;
     HOLY_TRINITY_NOCOPY(Web);
+
+    std::string getName() const noexcept;
 
     void print() const noexcept;
 
@@ -32,58 +35,12 @@ public:
 
 private:
     std::string mName;
+    // std::string mExprInfo;
 
     std::map<std::string, Node> mWeb;
-
-    static std::unordered_map<std::string, decltype(&core::Web::typeHandler)>
-    getRouter() noexcept;
-
-    static std::unordered_map<std::string, Node::Type> getNodeList() noexcept;
-
-    static std::unordered_map<std::string, int> getCodes() noexcept;
-
-    std::vector<long long> recurrentSearch(
-        std::vector<std::vector<int>> aTable,
-        std::vector<long long> attributes) noexcept;
-
-    static std::string getName(decltype(mVariables.begin()) aPtr) noexcept;
-    static std::string getName(
-        std::unordered_map<std::string, std::string>::const_iterator
-            aPtr) noexcept;
-
-    template <typename T>
-    bool usePart(const T& aCont,
-                 const std::string& aBlockName,
-                 const std::string& aType,
-                 const std::string& aName) noexcept
-    {
-        bool result = false;
-        auto it     = aCont.find(aName);
-        if (it != aCont.end())
-        {
-            createEdge(aBlockName, getName(it), aType);
-            result = true;
-        }
-        return result;
-    }
-
-    static std::unordered_map<std::string, std::string>
-    makeRelationMap() noexcept;
+    Matrix mMarix;
 
     void typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept;
-
-    static bool check(const char*& aStr) noexcept;
-
-    static std::string getInsides(const std::string& aStr) noexcept;
-
-    int mCicleNumber;
-    int mIfNumber;
-    int mBlockNumber;
-    int mExpressionNumber;
-
-    std::string mExprInfo;
-
-    std::unordered_map<int, std::vector<std::vector<long long>>> mMarix;
 };
 } // namespace core
 

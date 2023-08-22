@@ -12,11 +12,11 @@ set(
 
     main.cpp
 
+    matrix.cpp
+    matrix.hpp
+
     node.cpp
     node.hpp
-
-    vertix.cpp
-    vertix.hpp
 
     web.cpp
     web.hpp
