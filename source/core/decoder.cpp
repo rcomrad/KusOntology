@@ -44,14 +44,18 @@ core::Decoder::preprocess(std::string& aData) noexcept
             if (num != std::string::npos)
             {
                 int cnt = 0;
-                while (!(aData[num] == ')' && cnt == 1))
+                if (i != "else")
                 {
-                    if (aData[num] == '(') ++cnt;
-                    if (aData[num] == ')') --cnt;
-                    ++num;
+                    while (!(aData[num] == ')' && cnt == 1))
+                    {
+                        if (aData[num] == '(') ++cnt;
+                        if (aData[num] == ')') --cnt;
+                        ++num;
+                    }
                 }
                 ++num;
                 while (std::isspace(aData[num])) ++num;
+                if (aData[num] == 'i' && aData[num + 1] == 'f') continue;
                 if (aData[num] != '{')
                 {
                     aData[num - 1]                  = '{';

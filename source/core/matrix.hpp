@@ -15,7 +15,9 @@ public:
     // void pushForLastNode(long long aNum) noexcept;
     void collapse() noexcept;
 
-    float intersect(const Matrix& aOther) const noexcept;
+    float intersect(const Matrix& aOther,
+                    bool aWithoutConcept  = true,
+                    bool aNotFullEquality = true) const noexcept;
 
     void print(const std::string& aName) const noexcept;
 
@@ -28,7 +30,8 @@ private:
 
     static float compare(
         const std::vector<std::vector<dom::Pair<long long>>>& aFirst,
-        const std::vector<std::vector<dom::Pair<long long>>>& aSecond) noexcept;
+        const std::vector<std::vector<dom::Pair<long long>>>& aSecond,
+        bool aNotFullEquality = true) noexcept;
 
     static float distance(
         const std::vector<dom::Pair<long long>>& aFrom,

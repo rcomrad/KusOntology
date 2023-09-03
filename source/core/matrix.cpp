@@ -2,7 +2,11 @@
 
 #include <set>
 
+#include "domain/log.hpp"
+
 #include "file_data/file.hpp"
+
+#include "node.hpp"
 
 void
 core::Matrix::add_node(long long aNum,
@@ -36,12 +40,20 @@ core::Matrix::collapse() noexcept
 }
 
 float
-core::Matrix::intersect(const Matrix& aOther) const noexcept
+core::Matrix::intersect(const Matrix& aOther,
+                        bool aWithoutConcept,
+                        bool aNotFullEquality) const noexcept
 {
     float result = 0;
     std::set<long long> allNodes;
     allNodes.insert(mNodes.begin(), mNodes.end());
     allNodes.insert(aOther.mNodes.begin(), aOther.mNodes.end());
+
+    if (aWithoutConcept)
+    {
+        // std::set<long long> erase = {2};
+        allNodes.erase(2);
+    }
 
     for (auto& cur : allNodes)
     {
@@ -51,7 +63,7 @@ core::Matrix::intersect(const Matrix& aOther) const noexcept
         if (it1 == mAttributes.end()) continue;
         if (it2 == aOther.mAttributes.end()) continue;
 
-        result += compare(it1->second, it2->second);
+        result += compare(it1->second, it2->second, aNotFullEquality);
     }
 
     return result / allNodes.size();
@@ -90,7 +102,8 @@ core::Matrix::print(const std::string& aName) const noexcept
 float
 core::Matrix::compare(
     const std::vector<std::vector<dom::Pair<long long>>>& aFirst,
-    const std::vector<std::vector<dom::Pair<long long>>>& aSecond) noexcept
+    const std::vector<std::vector<dom::Pair<long long>>>& aSecond,
+    bool aNotFullEquality) noexcept
 {
     float result = 0;
 
@@ -107,36 +120,42 @@ core::Matrix::compare(
             {
                 usedFirst[i] = usedSecond[j] = true;
                 result += 1;
+                break;
             }
         }
     }
 
-    for (int i = 0; i < usedFirst.size(); ++i)
+    if (aNotFullEquality)
     {
-        if (usedFirst[i]) continue;
-
-        int num   = -1;
-        float val = 0;
-
-        for (int j = 0; j < usedSecond.size(); ++j)
+        for (int i = 0; i < usedFirst.size(); ++i)
         {
-            if (usedSecond[j]) continue;
-            float temp = distance(aFirst[i], aSecond[j]);
-            if (temp > val)
+            if (usedFirst[i]) continue;
+
+            int num   = -1;
+            float val = 0;
+
+            for (int j = 0; j < usedSecond.size(); ++j)
             {
-                val = temp;
-                num = j;
+                if (usedSecond[j]) continue;
+                float temp = distance(aFirst[i], aSecond[j]);
+                if (temp > val)
+                {
+                    val = temp;
+                    num = j;
+                }
             }
-        }
 
-        if (num > -1)
-        {
-            usedFirst[i] = usedSecond[num] = true;
-            result += val;
+            if (num > -1)
+            {
+                usedFirst[i] = usedSecond[num] = true;
+                result += val;
+            }
         }
     }
 
     result /= (aFirst.size() + aSecond.size()) / 2.;
+
+    // dom::writeInfo(result);
 
     return result;
 }
@@ -160,6 +179,7 @@ core::Matrix::distance(const std::vector<dom::Pair<long long>>& aFrom,
             {
                 usedFrom[i] = usedTo[j] = true;
                 result += 2;
+                break;
             }
         }
     }
@@ -179,6 +199,6 @@ core::Matrix::distance(const std::vector<dom::Pair<long long>>& aFrom,
     }
 
     result /= aFrom.size() + aTo.size();
-
+    // dom::writeInfo(result);
     return result;
 }

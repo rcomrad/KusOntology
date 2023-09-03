@@ -7,9 +7,9 @@ main()
 {
     int n;
     cin >> n;
-    if (n == 0)
-    {
 
+    if (n != 0)
+    {
         vector<long long> num(n);
 
         for (int i = 0; i < n; i++)

@@ -86,9 +86,11 @@ core::Web::makeMatrix() noexcept
 }
 
 float
-core::Web::compare(const Web& other) const noexcept
+core::Web::compare(const Web& other,
+                   bool aWithoutConcept,
+                   bool aNotFullEquality) const noexcept
 {
-    return mMarix.intersect(other.mMarix);
+    return mMarix.intersect(other.mMarix, aWithoutConcept, aNotFullEquality);
 }
 
 void
@@ -123,7 +125,7 @@ core::Web::print() const noexcept
 void
 core::Web::typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept
 {
-    if (aNode.second.mType == Node::Type::Nun) return;
+    if (aNode.second.mType != Node::Type::Nun) return;
 
     static auto dict = Language::getNodeList();
     auto it          = dict.find(aNode.first);

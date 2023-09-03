@@ -17,6 +17,13 @@ core::Language::getNodeList() noexcept
     addNamesToList(result, Node::Type::Condition, {"if"s, "else if"s, "else"s});
     addNamesToList(result, Node::Type::Expression, {"expression"});
 
+    // result["int"]       = Node::Type::Int;
+    // result["long long"] = Node::Type::LL;
+    // result["float"]     = Node::Type::Float;
+    // result["double"]    = Node::Type::Double;
+    // result["char"]      = Node::Type::Char;
+    // result["bool"]      = Node::Type::Bool;
+
     return result;
 }
 

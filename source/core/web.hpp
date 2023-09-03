@@ -25,7 +25,9 @@ public:
 
     void makeMatrix() noexcept;
 
-    float compare(const Web& other) const noexcept;
+    float compare(const Web& other,
+                  bool aWithoutConcept  = true,
+                  bool aNotFullEquality = true) const noexcept;
 
     void addNode(const std::string& aName, Node::Type aType) noexcept;
     void createEdge(const std::string& aFrom,
