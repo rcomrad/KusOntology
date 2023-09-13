@@ -3,6 +3,7 @@
 #include <set>
 
 #include "domain/log.hpp"
+#include "domain/metaprogramming.hpp"
 
 #include "file_data/file.hpp"
 
@@ -73,24 +74,41 @@ void
 core::Matrix::print(const std::string& aName) const noexcept
 {
     std::string data;
+
+    data += "   | ";
     for (int i = 0; i < mTable.size(); ++i)
     {
+        data += (mNodes[i] > 100 ? ""s : " "s) + (mNodes[i] > 10 ? "" : " ") +
+                std::to_string(mNodes[i]) + " ";
+    }
+    data += "\n----";
+    for (int i = 0; i < mTable.size(); ++i)
+    {
+        data += "----";
+    }
+    data += "\n";
+
+    for (int i = 0; i < mTable.size(); ++i)
+    {
+        data += (mNodes[i] > 10 ? "" : " ") + std::to_string(mNodes[i]) + " | ";
         for (auto& j : mTable[i])
         {
-            data += std::to_string(j) + " ";
+            data += (j > 100 ? ""s : " "s) + (j > 10 ? "" : " ") +
+                    std::to_string(j) + " ";
         }
-        data += " = " + std::to_string(mNodes[i]) + "\n";
+        data += "\n";
     }
     file::File::writeData("output", aName + "_matrix", data);
 
     data.clear();
     for (auto& i : mAttributes)
     {
+        data += std::to_string(i.first) + "->\n";
         for (auto& j : i.second)
         {
             for (auto& k : j)
             {
-                data += std::to_string(k.first) + ":" +
+                data += "\t" + std::to_string(k.first) + ":" +
                         std::to_string(k.second) + " ";
             }
             data += "\n";

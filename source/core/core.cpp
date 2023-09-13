@@ -40,8 +40,8 @@ core::Core::print() noexcept
 {
     for (auto& i : mWebs)
     {
-        i.second.print();
         i.second.makeMatrix();
+        i.second.print();
     }
 }
 
