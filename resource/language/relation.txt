@@ -6,3 +6,5 @@ is child
 contain located
 return associated
 next priveus
+call invocated
+method_of has_method

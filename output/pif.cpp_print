@@ -2,10 +2,10 @@
 	child
 		cond_block_0
 2) function
-	is
+	child
 		main
 3) main
-	child
+	is
 		function
 	return
 		int
@@ -84,6 +84,7 @@
 	participate
 		expr_block_001
 		expr_block_004
+		expr_block_005
 		expr_block_007
 		expr_block_009
 	located
@@ -147,6 +148,7 @@
 	use
 		a
 		b
+		c
 	contain
 		expr_block_006
 	located

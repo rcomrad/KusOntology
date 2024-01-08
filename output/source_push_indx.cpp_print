@@ -9,10 +9,10 @@
 		cond_block_2
 		cond_block_3
 3) function
-	is
+	child
 		main
 4) main
-	child
+	is
 		function
 	return
 		int
@@ -61,6 +61,7 @@
 		expr_block_012
 	participate
 		expr_block_011
+	put_to
 		expr_block_013
 	located
 		main
@@ -223,9 +224,8 @@
 	located
 		cond_block_3
 31) expr_block_013
-	use
-		k
 	output
+		k
 		num
 	located
 		main

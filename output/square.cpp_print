@@ -2,10 +2,10 @@
 	child
 		cond_block_0
 2) function
-	is
+	child
 		main
 3) main
-	child
+	is
 		function
 	return
 		int

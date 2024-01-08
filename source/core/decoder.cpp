@@ -1,5 +1,6 @@
 #include "decoder.hpp"
 
+#include "domain/log.hpp"
 #include "file_data/file.hpp"
 #include "file_data/parser.hpp"
 #include "file_data/path.hpp"
@@ -24,6 +25,7 @@ core::Decoder::Decoder(const std::string& aFileName) noexcept
         aFileName.substr(aFileName.rfind('/') + 1, aFileName.size());
     auto code = file::File::getAllData(aFileName);
     preprocess(code);
+    file::File::writeData("output", mFileName + "_preprocess", code);
     process(code);
 }
 
@@ -34,7 +36,6 @@ core::Decoder::preprocess(std::string& aData) noexcept
 {
     static std::unordered_set<std::string> names = {"if", "else", "for",
                                                     "while"};
-
     for (auto& i : names)
     {
         int num = 0;
@@ -67,6 +68,32 @@ core::Decoder::preprocess(std::string& aData) noexcept
                 break;
             }
         }
+    }
+
+    int curNum = 0;
+    while ((curNum = aData.find(">", curNum))!= std::string::npos)
+    {
+        int last = curNum;
+
+        do {++curNum;}
+        while (std::isspace(aData[curNum]));
+
+        std::string temp;
+        do {
+            temp.push_back(aData[curNum]);
+            ++curNum;
+        }
+        while (std::isalpha(aData[curNum]));
+
+        while (std::isspace(aData[curNum])) ++curNum;;
+
+        temp = ";\n" + temp + ".resize";
+        if (aData[curNum] == '(')
+        {
+            aData.insert(curNum, temp);
+        }
+
+        curNum = last + 1;
     }
 }
 
@@ -246,7 +273,7 @@ core::Decoder::funcHandler(const std::string& aCommand,
     std::string funcType = aCommand;
     std::string funcName = parts[0];
 
-    mWeb.createEdge(funcName, "function", "child"s, Node::Type::Function);
+    mWeb.createEdge(funcName, "function", "is"s, Node::Type::Function);
     mWeb.createEdge(funcType, funcName, "associated"s, Node::Type::Type);
 
     return {funcName};
@@ -317,12 +344,12 @@ core::Decoder::expressionHandler(const std::string& aCommand,
     std::string expNumStr = std::to_string(mExpressionNumber);
     while (expNumStr.size() < 3) expNumStr = "0" + expNumStr;
     std::string blockName = "expr_block_" + expNumStr;
-    // dom::writeInfo(blockName, "<->", aCommand, aArgs);
+    dom::writeInfo(blockName, "<->", aCommand, aArgs);
     // mExprInfo += blockName + " <-> " + aCommand + " " + aArgs + "\n";
 
     // TODO: ++ -- as asigment
     bool flag  = false;
-    auto parts = file::Parser::slice(aArgs, " \t\n*/=<>");
+    auto parts = file::Parser::slice(aArgs, " \t\n*/=<>.()[]!");
 
     if (parts[0].find("++") != std::string::npos ||
         parts[0].find("--") != std::string::npos ||
@@ -338,13 +365,25 @@ core::Decoder::expressionHandler(const std::string& aCommand,
     if (parts[0] == "cin") type = "input";
     if (parts[0] == "cout") type = "output";
 
+    std::string lastContainer;
     for (auto& i : parts)
     {
         auto temp = file::Parser::slice(i, "[]");
+        auto tempCont = mWeb.isContainer(i);
+        if (!tempCont.empty())
+        {
+            lastContainer = tempCont;
+        }
+
         for (int j = 0; j < temp.size(); ++j)
         {
             flag |= usePart(mVariables, blockName, j ? "use" : type, temp[j]);
-            flag |= usePart(methods, blockName, "use", temp[j]);
+            if (usePart(methods, blockName, "call", lastContainer + "_" + temp[j]))
+            {
+                flag = true;
+                mWeb.createEdge(lastContainer, lastContainer + "_" + temp[j],
+                                        "has_method");
+            }
         }
     }
 
@@ -398,7 +437,7 @@ core::Decoder::getInsides(const std::string& aStr) noexcept
 {
     // TODO: erase
     int start          = aStr.find('(') + 1;
-    int end            = aStr.find(')');
+    int end            = aStr.rfind(')');
     std::string result = aStr.substr(start, end - start);
 
     return result;

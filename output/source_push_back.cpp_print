@@ -9,10 +9,10 @@
 		cond_block_2
 		cond_block_3
 3) function
-	is
+	child
 		main
 4) main
-	child
+	is
 		function
 	return
 		int
