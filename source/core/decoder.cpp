@@ -31,6 +31,7 @@ core::Decoder::Decoder(const std::string& aFileName) noexcept
 
 //--------------------------------------------------------------------------------
 
+#include <regex>
 void
 core::Decoder::preprocess(std::string& aData) noexcept
 {
@@ -95,6 +96,9 @@ core::Decoder::preprocess(std::string& aData) noexcept
 
         curNum = last + 1;
     }
+
+    //std::replace(aData.begin(), aData.end(), "[0]", ".front()");
+    aData = std::regex_replace(aData, std::regex("\\[0\\]"), ".front()");
 }
 
 std::unordered_set<std::string>

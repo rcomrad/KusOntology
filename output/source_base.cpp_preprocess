@@ -16,7 +16,7 @@ num.resize(n);
         cin >> num[i];
     }
 
-    long long max = num[0];
+    long long max = num.front();
     for (int i = 0; i < n; i++)
     {
         if (num[i] > max){max = num[i];}    }

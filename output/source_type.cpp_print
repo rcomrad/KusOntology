@@ -1,22 +1,27 @@
-1) vector_resize
+1) vector_front
+	invocated
+		expr_block_007
+	method_of
+		vector
+2) vector_resize
 	invocated
 		expr_block_002
 	method_of
 		vector
-2) cicle
+3) cicle
 	child
 		cicle_0
 		cicle_1
-3) condition
+4) condition
 	child
 		cond_block_0
 		cond_block_1
 		cond_block_2
 		cond_block_3
-4) function
+5) function
 	child
 		main
-5) main
+6) main
 	is
 		function
 	return
@@ -32,21 +37,22 @@
 		max
 		n
 		num
-6) int
+7) int
 	associated
 		main
 	child
 		i
 		max
-7) long long
+8) long long
 	child
 		n
-8) vector
+9) vector
 	has_method
+		vector_front
 		vector_resize
 	child
 		num
-9) i
+10) i
 	is
 		int
 	assigned
@@ -64,7 +70,7 @@
 		cicle_1
 	get_from
 		expr_block_006
-10) max
+11) max
 	is
 		int
 	assigned
@@ -76,7 +82,7 @@
 		expr_block_013
 	located
 		main
-11) n
+12) n
 	is
 		long long
 	get_from
@@ -88,7 +94,7 @@
 		expr_block_009
 	located
 		main
-12) num
+13) num
 	is
 		vector
 	participate
@@ -100,28 +106,28 @@
 		expr_block_006
 	located
 		main
-13) cond_block_0
+14) cond_block_0
 	is
 		condition
 	use
 		expr_block_001
 	located
 		main
-14) cond_block_1
+15) cond_block_1
 	is
 		condition
 	use
 		expr_block_004
 	located
 		cicle_0
-15) cond_block_2
+16) cond_block_2
 	is
 		condition
 	use
 		expr_block_009
 	located
 		cicle_1
-16) cond_block_3
+17) cond_block_3
 	is
 		condition
 	use
@@ -130,7 +136,7 @@
 		expr_block_012
 	located
 		cicle_1
-17) cicle_0
+18) cicle_0
 	is
 		cicle
 	contain
@@ -141,7 +147,7 @@
 		i
 	located
 		main
-18) cicle_1
+19) cicle_1
 	is
 		cicle
 	contain
@@ -152,17 +158,17 @@
 		i
 	located
 		main
-19) expr_block_000
+20) expr_block_000
 	input
 		n
 	located
 		main
-20) expr_block_001
+21) expr_block_001
 	use
 		n
 	participate
 		cond_block_0
-21) expr_block_002
+22) expr_block_002
 	use
 		n
 		num
@@ -170,59 +176,61 @@
 		main
 	call
 		vector_resize
-22) expr_block_003
+23) expr_block_003
 	sets
 		i
 	located
 		cicle_0
-23) expr_block_004
+24) expr_block_004
 	use
 		i
 		n
 	participate
 		cond_block_1
-24) expr_block_005
+25) expr_block_005
 	sets
 		i
 	located
 		cicle_0
-25) expr_block_006
+26) expr_block_006
 	input
 		i
 		num
 	located
 		cicle_0
-26) expr_block_007
+27) expr_block_007
 	sets
 		max
 	use
 		num
 	located
 		main
-27) expr_block_008
+	call
+		vector_front
+28) expr_block_008
 	sets
 		i
 	located
 		cicle_1
-28) expr_block_009
+29) expr_block_009
 	use
 		i
 		n
 	participate
 		cond_block_2
-29) expr_block_010
+30) expr_block_010
 	sets
 		i
 	located
 		cicle_1
-30) expr_block_011
+31) expr_block_011
 	use
 		i
 		max
 		num
 	participate
 		cond_block_3
-31) expr_block_012
+32) expr_block_012
 	sets
 		max
 	use
@@ -230,7 +238,7 @@
 		num
 	located
 		cond_block_3
-32) expr_block_013
+33) expr_block_013
 	output
 		max
 	located
