@@ -3,3 +3,6 @@ queue
 array
 map
 unordered_map
+set
+unordered_set
+list

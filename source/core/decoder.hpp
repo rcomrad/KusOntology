@@ -38,7 +38,8 @@ private:
     std::unordered_set<std::string> typeHandler(
         const std::string& aCommand, const std::string& aArgs) noexcept;
     std::unordered_set<std::string> declarationHandler(
-        const std::string& aCommand, const std::string& aArgs) noexcept;
+        const std::string& aCommand, const std::string& aArgs,
+        Node::Type aType =  Node::Type::Variable) noexcept;
     std::unordered_set<std::string> funcHandler(
         const std::string& aCommand, const std::string& aArgs) noexcept;
     std::unordered_set<std::string> cicleHandler(

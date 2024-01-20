@@ -99,6 +99,9 @@ core::Decoder::preprocess(std::string& aData) noexcept
 
     //std::replace(aData.begin(), aData.end(), "[0]", ".front()");
     aData = std::regex_replace(aData, std::regex("\\[0\\]"), ".front()");
+    aData = std::regex_replace(aData, std::regex("unordered_map"), "map");
+    aData = std::regex_replace(aData, std::regex("unordered_set"), "set");
+
 }
 
 std::unordered_set<std::string>
@@ -241,7 +244,8 @@ core::Decoder::typeHandler(const std::string& aCommand,
 
 std::unordered_set<std::string>
 core::Decoder::declarationHandler(const std::string& aCommand,
-                                  const std::string& aArgs) noexcept
+                                  const std::string& aArgs,
+                                  Node::Type aType) noexcept
 {
     std::unordered_set<std::string> result;
 
@@ -261,7 +265,7 @@ core::Decoder::declarationHandler(const std::string& aCommand,
             result.insert(value.begin(), value.end());
         }
 
-        mWeb.createEdge(name, aCommand, "is"s, Node::Type::Variable);
+        mWeb.createEdge(name, aCommand, "is"s, aType);
         mVariables.insert(name);
         result.insert(std::move(name));
     }
@@ -370,23 +374,34 @@ core::Decoder::expressionHandler(const std::string& aCommand,
     if (parts[0] == "cout") type = "output";
 
     std::string lastContainer;
+    std::string curContainer;
     for (auto& i : parts)
     {
         auto temp = file::Parser::slice(i, "[]");
-        auto tempCont = mWeb.isContainer(i);
+        auto tempCont = mWeb.getContainer(i);
         if (!tempCont.empty())
         {
             lastContainer = tempCont;
+            int phe = lastContainer.find('_');
+            curContainer = 
+                lastContainer.substr(0, lastContainer.find('_'));
+            lastContainer = 
+                lastContainer.substr(phe + 1, lastContainer.size());       
         }
 
         for (int j = 0; j < temp.size(); ++j)
         {
             flag |= usePart(mVariables, blockName, j ? "use" : type, temp[j]);
-            if (usePart(methods, blockName, "call", lastContainer + "_" + temp[j]))
+            if (usePart(methods, blockName, "call", curContainer + "_" + temp[j]))
             {
                 flag = true;
-                mWeb.createEdge(lastContainer, lastContainer + "_" + temp[j],
+                mWeb.createEdge(curContainer, curContainer + "_" + temp[j],
                                         "has_method");
+                curContainer = 
+                    lastContainer.substr(0, lastContainer.find('_'));
+                int phe = lastContainer.find('_');
+                lastContainer = 
+                    lastContainer.substr(phe + 1, lastContainer.size());                  
             }
         }
     }
@@ -405,8 +420,36 @@ std::unordered_set<std::string>
 core::Decoder::containerHandler(const std::string& aCommand,
                                 const std::string& aArgs) noexcept
 {
-    std::string temp = aArgs.substr(aArgs.rfind('>') + 1, aArgs.size());
-    return declarationHandler(aCommand, temp);
+    std::vector<std::string> types = {aCommand};
+    std::string vars = aArgs.substr(aArgs.rfind('>') + 1, aArgs.size());
+    std::string subtype = aArgs.substr(1, aArgs.rfind('>') - 1);
+
+    int gg = 0;
+    for(int i = 0; i < subtype.size(); ++i)
+    {
+        if (std::isspace(subtype[i])) ++gg;
+        else subtype[i - gg] = subtype[i];
+    }
+    subtype.resize(subtype.size() - gg);
+
+    while (subtype.find('<') != std::string::npos)
+    {
+        types.emplace_back(subtype.substr(0, subtype.find('<')));
+        subtype = subtype.substr(subtype.find('<') + 1, subtype.rfind('>') - 2);
+    }
+
+    std::string command = types[0];
+    for(int j = 1; j < types.size(); ++j)
+    {
+        auto& i = types[j];
+        std::string oldComm = command;
+        command.push_back('_');
+        command += i;
+        mWeb.createEdge(command, oldComm, "base"s, Node::Type::Concept);
+        mWeb.createEdge(command, i, "contains"s, Node::Type::Concept);
+    }
+    
+    return declarationHandler(command, vars, Node::Type::ContainerVariable);
 }
 
 //--------------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <list>
 #include <queue>
 using namespace std;
 
@@ -8,7 +9,6 @@ main()
 {
     int n;
     cin >> n;
-    vector<queue<int>> gr;
-gr.resize(n);
-    gr.front().push(4);
+    list<vector<queue<int>>> gr(n);
+    gr[0].push(4);
 }

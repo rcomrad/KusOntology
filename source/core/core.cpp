@@ -50,25 +50,25 @@ core::Core::check() noexcept
 {
     auto baseName = file::VariableStorage::getInstance().getWordUnsafe("base");
     auto& base    = mWebs[baseName];
-    for (auto& name : {
-             "source_base.cpp",
-             "source_type.cpp",
-             "source_if.cpp",
-             "source_iftypy.cpp",
-             "source_indx_search.cpp",
-             "source_push_back.cpp",
-             "source_push_indx.cpp",
-             "source_othe_sol.cpp",
-             "simple0.cpp",
-             "odd.cpp",
-             "square.cpp",
-             "pif.cpp",
-         })
-    {
-        auto& i = *mWebs.find(name);
-        dom::writeInfo(
-            baseName, "<->", i.first, "=", base.compare(i.second, false, false),
-            base.compare(i.second, false, true),
-            base.compare(i.second, true, false), base.compare(i.second));
-    }
+    // for (auto& name : {
+    //          "source_base.cpp",
+    //          "source_type.cpp",
+    //          "source_if.cpp",
+    //          "source_iftypy.cpp",
+    //          "source_indx_search.cpp",
+    //          "source_push_back.cpp",
+    //          "source_push_indx.cpp",
+    //          "source_othe_sol.cpp",
+    //          "simple0.cpp",
+    //          "odd.cpp",
+    //          "square.cpp",
+    //          "pif.cpp",
+    //      })
+    // {
+    //     auto& i = *mWebs.find(name);
+    //     dom::writeInfo(
+    //         baseName, "<->", i.first, "=", base.compare(i.second, false, false),
+    //         base.compare(i.second, false, true),
+    //         base.compare(i.second, true, false), base.compare(i.second));
+    // }
 }

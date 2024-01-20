@@ -35,7 +35,9 @@ public:
                     const std::string& aFromRelation,
                     Node::Type aFromType = Node::Type::Nun) noexcept;
 
-    std::string isContainer(const std::string& aName) const noexcept;               
+    // bool isContainer(const std::string& aName) const noexcept;
+    // std::string getBase(const std::string& aName) const noexcept;
+    std::string getContainer(const std::string& aName) const noexcept;
 
 private:
     std::string mName;

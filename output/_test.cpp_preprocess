@@ -1,13 +1,19 @@
 #include <iostream>
 #include <vector>
+#include <list>
 #include <queue>
+#include <set>
 using namespace std;
+
+void foo()
+{
+    int a;
+}
 
 int
 main()
 {
     int n;
     cin >> n;
-    vector<queue<int>> gr(n);
-    gr[0].push(4);
+    foo();
 }

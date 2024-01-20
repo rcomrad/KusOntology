@@ -13,6 +13,7 @@ core::Language::getNodeList() noexcept
     loadNamesFromFile(result, Node::Type::Concept, "concept.txt");
     loadNamesFromFile(result, Node::Type::Container, "containers.txt");
     loadNamesFromFile(result, Node::Type::Type, "type.txt");
+    loadNamesFromFile(result, Node::Type::Method, "method2.txt");
     addNamesToList(result, Node::Type::Cicle, {"for", "while"});
     addNamesToList(result, Node::Type::Condition, {"if"s, "else if"s, "else"s});
     addNamesToList(result, Node::Type::Expression, {"expression"});

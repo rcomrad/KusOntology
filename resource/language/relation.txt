@@ -8,3 +8,5 @@ return associated
 next priveus
 call invocated
 method_of has_method
+base dereved
+partisipate contains

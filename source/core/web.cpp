@@ -135,34 +135,84 @@ core::Web::typeAutomaticDetection(decltype(*mWeb.begin())& aNode) noexcept
     }
 }
 
+// bool
+// core::Web::isContainer(const std::string& aName) const noexcept
+// {
+//     bool result = false;
+
+//     auto it = mWeb.find(aName);
+//     if (it != mWeb.end() && it->second.mType == Node::Type::ContainerVariable)
+//     {
+//         result = true;
+//     }
+
+//     return result;
+// }
+
+// std::string
+// core::Web::getBase(const std::string& aName) const noexcept
+// {
+//     std::string result = "";
+
+//     auto it1 = mWeb.find(aName);
+//     if (it1 != mWeb.end())
+//     {
+//         auto it2 = it1->second.mLeaves.find("base");
+//         if (it2 !=  it1->second.mLeaves.end())
+//         {
+//             result = it2->second;
+//         }
+//         else
+//         {
+//             result=aName;
+//         }
+//     }
+//     else
+//     {
+//         //TODO
+//     }
+
+//     return result;
+// }
+
+// std::string
+// core::Web::getContainer(const std::string& aName) const noexcept
+// {
+//     std::string result = "";
+
+//     auto it1 = mWeb.find(aName);
+//     if (it1 != mWeb.end())
+//     {
+//         auto it2 = it1->second.mLeaves.find("is");
+//         if (it2 !=  it1->second.mLeaves.end())
+//         {
+//             if (containers.contains(*it2->second.begin()))
+//             {
+//                 result = *it2->second.begin();
+//             }
+//         }
+//         else
+//         {
+//             //TODO
+//         }
+//     }
+//     else
+//     {
+//         //TODO
+//     }
+
+//     return result;
+// }
+
 std::string
-core::Web::isContainer(const std::string& aName) const noexcept
+core::Web::getContainer(const std::string& aName) const noexcept
 {
     std::string result = "";
 
-    static std::unordered_set<std::string> containers =
-        file::File::getWordsSet(
-            file::Path::getPathUnsafe("language", "containers.txt"));
-
-    auto it1 = mWeb.find(aName);
-    if (it1 != mWeb.end())
+    auto it = mWeb.find(aName);
+    if (it != mWeb.end() && it->second.mType == Node::Type::ContainerVariable)
     {
-        auto it2 = it1->second.mLeaves.find("is");
-        if (it2 !=  it1->second.mLeaves.end())
-        {
-            if (containers.contains(*it2->second.begin()))
-            {
-                result = *it2->second.begin();
-            }
-        }
-        else
-        {
-            //TODO
-        }
-    }
-    else
-    {
-        //TODO
+        result = *it->second.mLeaves.find("is"s)->second.begin();
     }
 
     return result;
